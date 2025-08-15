@@ -154,16 +154,19 @@ export default function UserDashboard() {
               {cards.map((card) => (
                 <Card
                   key={card.id}
-                  radius="2xl"             // Once UI radius API
+                  radius="2xl"
                   padding="m"
                   shadow="l"
                   style={{
-                    // CURVED EDGES FIX — preserve your premium background and enforce curvature
                     borderRadius: "var(--radius-2xl, 24px)",
                     overflow: "hidden",
-                    aspectRatio: "1.586", // physical credit card ratio
+                    aspectRatio: "1.586",
+                    // SAME PREMIUM GRADIENT + GLASS EFFECT AS TOP-UP
                     background:
-                      "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+                      "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    border: "1px solid rgba(255, 255, 255, 0.15)",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
@@ -211,7 +214,19 @@ export default function UserDashboard() {
         </Column>
 
         {/* Top-Up Section */}
-        <Card radius="xl" shadow="xl" padding="l" style={{ flex: "1 1 350px" }}>
+        <Card
+          radius="xl"
+          shadow="xl"
+          padding="l"
+          style={{
+            flex: "1 1 350px",
+            background:
+              "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+          }}
+        >
           <Flex align="center" gap="s">
             <Icon icon={ArrowUpCircle} size="m" />
             <Heading variant="title-strong-m">Top Up</Heading>
