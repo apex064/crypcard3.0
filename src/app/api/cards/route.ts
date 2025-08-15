@@ -7,17 +7,17 @@ function maskCardNumber(number: string) {
   return number.slice(0, 4) + " **** **** " + number.slice(-4);
 }
 
-// Helper to get API token (fixed for OAuth2)
+// Helper to get API token
 async function getApiToken() {
   const response = await fetch("https://omega.alpha.africa/oauth/token", {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({
       grant_type: "password",
-      client_id: process.env.ALPHA_CLIENT_ID!,
-      client_secret: process.env.ALPHA_CLIENT_SECRET!,
-      username: process.env.ALPHA_USERNAME!,
-      password: process.env.ALPHA_PASSWORD!,
+      client_id: process.env.ALPHA_CLIENT_ID,
+      client_secret: process.env.ALPHA_CLIENT_SECRET,
+      username: process.env.ALPHA_USERNAME,
+      password: process.env.ALPHA_PASSWORD,
     }),
   });
 
@@ -33,7 +33,7 @@ async function createCardholder(token: string, user: any, purpose: string = "vis
     first_name: (user.first_name || "John").slice(0, 12),
     mid_name: (user.mid_name || "").slice(0, 12),
     last_name: (user.last_name || "Doe").slice(0, 12),
-    gender: user.gender ?? 0,
+    gender: user.gender ?? 0, // 0=Male, 1=Female, 2=Other
     date_of_birth: user.date_of_birth || "1990-01-01",
     email_address: user.email || "john.doe@example.com",
     purpose,
@@ -94,7 +94,7 @@ async function getCardDetails(token: string, cardId: string) {
   return data.data;
 }
 
-// --- GET: Fetch user cards & refresh balances ---
+// --- GET: Fetch user cards ---
 export async function GET(req: NextRequest) {
   try {
     const authHeader = req.headers.get("authorization");
@@ -105,37 +105,7 @@ export async function GET(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 
     const result = await query("SELECT * FROM cards WHERE user_id = $1 ORDER BY created_at DESC", [user.id]);
-    let cards = result.rows;
-
-    if (cards.length > 0) {
-      const apiToken = await getApiToken();
-
-      cards = await Promise.all(
-        cards.map(async (card) => {
-          try {
-            const cardData = await getCardDetails(apiToken, card.id);
-            const latestBalance = parseFloat(cardData.card.balance);
-            const latestStatus = cardData.card.state;
-
-            await query(
-              `UPDATE cards SET balance = $1, status = $2 WHERE id = $3`,
-              [latestBalance, latestStatus, card.id]
-            );
-
-            return {
-              ...card,
-              balance: latestBalance,
-              status: latestStatus,
-            };
-          } catch (err) {
-            console.error(`Failed to refresh card ${card.id}:`, err);
-            return card;
-          }
-        })
-      );
-    }
-
-    const maskedCards = cards.map((card) => ({
+    const cards = result.rows.map((card) => ({
       id: card.id,
       number: card.number,
       maskedNumber: maskCardNumber(card.number),
@@ -147,7 +117,7 @@ export async function GET(req: NextRequest) {
       created_at: card.created_at,
     }));
 
-    return NextResponse.json({ cards: maskedCards });
+    return NextResponse.json({ cards });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
