@@ -10,9 +10,9 @@ type HeaderProps = {
 };
 
 const navItems = [
-  { title: "Cards", href: "/user/cards", icon: CreditCard },
-  { title: "Top-Up", href: "dashboard/user/topup", icon: ArrowUpCircle },
-  { title: "Transactions", href: "dashbaord/user/transactions", icon: BarChart3 },
+  { title: "Cards", href: "/dashboard/user/cards", icon: CreditCard },
+  { title: "Top-Up", href: "/dashboard/user/topup", icon: ArrowUpCircle },
+  { title: "Transactions", href: "/dashboard/user/transactions", icon: BarChart3 },
 ];
 
 export default function Header({ onLogout }: HeaderProps) {
