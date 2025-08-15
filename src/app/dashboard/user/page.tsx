@@ -161,16 +161,13 @@ export default function UserDashboard() {
                     borderRadius: "var(--radius-2xl, 24px)",
                     overflow: "hidden",
                     aspectRatio: "1.586",
-                    // SAME PREMIUM GRADIENT + GLASS EFFECT AS TOP-UP
                     background:
-                      "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)",
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                      "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
                     position: "relative",
+                    width: "100%",
                   }}
                 >
                   <Flex justify="space-between">
@@ -221,10 +218,7 @@ export default function UserDashboard() {
           style={{
             flex: "1 1 350px",
             background:
-              "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            border: "1px solid rgba(255, 255, 255, 0.15)",
+              "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
           }}
         >
           <Flex align="center" gap="s">
