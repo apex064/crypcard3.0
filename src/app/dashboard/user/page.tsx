@@ -54,9 +54,7 @@ export default function UserDashboard() {
     if (!token) return;
     const fetchCards = async () => {
       try {
-        const res = await fetch("/api/cards", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch("/api/cards", { headers: { Authorization: `Bearer ${token}` } });
         if (!res.ok) throw new Error("Failed to fetch cards");
         const data = await res.json();
         setCards(data.cards ?? []);
@@ -73,18 +71,13 @@ export default function UserDashboard() {
     try {
       const res = await fetch("/api/cards", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({}),
       });
       const data = await res.json();
       if (res.ok) {
         alert("Card request submitted!");
-        const updatedRes = await fetch("/api/cards", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const updatedRes = await fetch("/api/cards", { headers: { Authorization: `Bearer ${token}` } });
         const updatedData = await updatedRes.json();
         if (updatedRes.ok) setCards(updatedData.cards);
       } else alert("Error: " + (data.error ?? "Unknown"));
@@ -98,22 +91,14 @@ export default function UserDashboard() {
     e.preventDefault();
     if (!token) return alert("User not authenticated");
     if (!cardId) return alert("Select a card.");
-    if (!topupAmount || parseFloat(topupAmount) < 10)
-      return alert("Minimum top-up is $10.");
+    if (!topupAmount || parseFloat(topupAmount) < 10) return alert("Minimum top-up is $10.");
     if (!txid.trim()) return alert("TXID required.");
 
     try {
       const res = await fetch("/api/topup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          amount: parseFloat(topupAmount),
-          txid,
-          cardId,
-        }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ amount: parseFloat(topupAmount), txid, cardId }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -141,27 +126,21 @@ export default function UserDashboard() {
   };
 
   return (
-    <Column
-      fillWidth
-      fillHeight
-      gap="l"
-      padding="l"
-      style={{ minHeight: "100vh" }}
-    >
+    <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
       {/* Header */}
       <Header onLogout={handleLogout} />
+
+      {/* Section Header */}
+      <Flex align="center" gap="s" style={{ marginBottom: "0.5rem" }}>
+        <Badge variant="contrast" size="m">
+          My Cards
+        </Badge>
+      </Flex>
 
       {/* Cards & Top-Up Section */}
       <Flex gap="l" wrap="wrap" fillWidth>
         {/* Cards Section */}
-        <Card radius="xl" shadow="xl" padding="l" style={{ flex: "1 1 350px" }}>
-          {/* Black pill style heading */}
-          <Flex align="center" gap="s" style={{ marginBottom: "1rem" }}>
-            <Badge variant="contrast" size="m">
-              My Cards
-            </Badge>
-          </Flex>
-
+        <Column style={{ flex: "1 1 350px" }} gap="m">
           {cards.length === 0 ? (
             <Text>No cards found.</Text>
           ) : (
@@ -175,11 +154,11 @@ export default function UserDashboard() {
               {cards.map((card) => (
                 <Card
                   key={card.id}
-                  radius="lg"
+                  radius="2xl"
                   padding="m"
                   shadow="l"
                   style={{
-                    aspectRatio: "1.586", // credit card ratio
+                    aspectRatio: "1.586", // like a physical credit card
                     background:
                       "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
                     display: "flex",
@@ -187,41 +166,26 @@ export default function UserDashboard() {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Flex justify="space-between" align="center">
-                    <Badge
-                      variant={
-                        card.type === "Premium" ? "success" : "primary"
-                      }
-                    >
+                  <Flex justify="space-between">
+                    <Badge variant={card.type === "Premium" ? "success" : "primary"}>
                       {card.type}
                     </Badge>
-                    <Badge
-                      variant={
-                        card.status === "active" ? "success" : "warning"
-                      }
-                    >
+                    <Badge variant={card.status === "active" ? "success" : "warning"}>
                       {card.status}
                     </Badge>
                   </Flex>
 
                   <div style={{ marginTop: "auto" }}>
-                    <Heading
-                      variant="title-strong-s"
-                      style={{ fontSize: "1.25rem" }}
-                    >
+                    <Heading variant="title-strong-s" style={{ fontSize: "1.25rem" }}>
                       {card.maskedNumber}
                     </Heading>
                     <Text variant="label-default-s">CVV: {card.cvv}</Text>
                     <Text variant="label-default-s">
-                      Created:{" "}
-                      {new Date(card.created_at).toLocaleDateString()}
+                      Created: {new Date(card.created_at).toLocaleDateString()}
                     </Text>
                   </div>
 
-                  <Flex
-                    justify="space-between"
-                    style={{ marginTop: "0.5rem" }}
-                  >
+                  <Flex justify="space-between" style={{ marginTop: "0.5rem" }}>
                     <Column>
                       <Text variant="label-default-s">Balance</Text>
                       <Text>${card.balance.toFixed(2)}</Text>
@@ -240,23 +204,20 @@ export default function UserDashboard() {
           >
             Request New Card
           </Button>
-        </Card>
+        </Column>
 
         {/* Top-Up Section */}
         <Card radius="xl" shadow="xl" padding="l" style={{ flex: "1 1 350px" }}>
           <Flex align="center" gap="s">
             <Icon icon={ArrowUpCircle} size="m" />
-            <Heading variant="title-strong-m">Top Up </Heading>
+            <Heading variant="title-strong-m">Top Up</Heading>
           </Flex>
 
           <form onSubmit={handleTopupSubmit}>
             <Column gap="m" style={{ marginTop: "1rem" }}>
               {/* Select Card */}
               <div>
-                <Text
-                  variant="label-default-s"
-                  style={{ marginBottom: "0.5rem" }}
-                >
+                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
                   Select Card
                 </Text>
                 <select
@@ -283,10 +244,7 @@ export default function UserDashboard() {
 
               {/* Amount */}
               <div>
-                <Text
-                  variant="label-default-s"
-                  style={{ marginBottom: "0.5rem" }}
-                >
+                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
                   Amount (USD)
                 </Text>
                 <Input
@@ -301,10 +259,7 @@ export default function UserDashboard() {
 
               {/* Wallet Address */}
               <div>
-                <Text
-                  variant="label-default-s"
-                  style={{ marginBottom: "0.5rem" }}
-                >
+                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
                   USDT TRC20 Wallet Address
                 </Text>
                 <Flex gap="s" vertical="center">
@@ -331,10 +286,7 @@ export default function UserDashboard() {
 
               {/* TXID */}
               <div>
-                <Text
-                  variant="label-default-s"
-                  style={{ marginBottom: "0.5rem" }}
-                >
+                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
                   Transaction ID (TXID)
                 </Text>
                 <Input
