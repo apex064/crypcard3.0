@@ -55,7 +55,7 @@ export default function Home() {
 
           <Button
             id="get-started"
-            href="#signup"
+            href="/register"
             data-border="rounded"
             weight="default"
             prefixIcon="credit-card"
