@@ -325,6 +325,9 @@ export default function UserDashboard() {
 
       {/* Hover Styles */}
       <style jsx>{`
+        .hover-card {
+          transition: background 0.3s ease;
+        }
         .hover-card:hover {
           background: linear-gradient(
             135deg,
