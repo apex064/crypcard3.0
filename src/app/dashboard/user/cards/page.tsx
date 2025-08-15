@@ -6,9 +6,9 @@ import { CreditCard, Plus, Eye, EyeOff, Copy, CheckCircle } from "lucide-react";
 import Header from "@/components/Header";
 
 export default function MyCardsPage() {
+  const [cards, setCards] = useState<any[]>([]);
   const [showCardDetails, setShowCardDetails] = useState<string | null>(null);
   const [copiedCard, setCopiedCard] = useState<string | null>(null);
-  const [cards, setCards] = useState<any[]>([]);
 
   useEffect(() => {
     fetchCards();
@@ -68,102 +68,111 @@ export default function MyCardsPage() {
     <Column fillWidth fillHeight style={{ minHeight: "100vh", background: "var(--color-background)" }}>
       <Header />
 
-      <Column fillWidth gap="l" padding="l">
-        <Flex justify="space-between" align="center">
-          <Column gap="s">
-            <Heading variant="title-strong-l">My Cards</Heading>
-            <Text>Manage your virtual USD cards</Text>
-          </Column>
+      {/* Section Header */}
+      <Flex align="center" gap="s" style={{ margin: "1rem 0" }}>
+        <Badge variant="contrast" size="m">My Cards</Badge>
+      </Flex>
 
-          <Button onClick={handleRequestCard} icon={<Plus />} variant="primary">
-            Request New Card
-          </Button>
-        </Flex>
+      {/* Cards Grid */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "1rem",
+        }}
+      >
+        {cards.map((card) => (
+          <Card
+            key={card.id}
+            radius="2xl"
+            padding="m"
+            shadow="l"
+            style={{
+              borderRadius: "var(--radius-2xl, 24px)",
+              overflow: "hidden",
+              aspectRatio: "1.586",
+              background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              position: "relative",
+              width: "100%",
+              transition: "all 0.3s ease",
+              cursor: "pointer",
+            }}
+          >
+            <Flex justify="space-between">
+              <Badge variant={card.type === "Premium" ? "success" : "primary"}>
+                {card.type || "Standard"}
+              </Badge>
+              {getStatusBadge(card.status)}
+            </Flex>
 
-        {/* Cards Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-            gap: "1rem",
-            marginTop: "1rem",
-          }}
-        >
-          {cards.map((card) => (
-            <Card
-              key={card.id}
-              radius="2xl"
-              shadow="l"
-              style={{
-                overflow: "hidden",
-                background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                padding: "1rem",
-                cursor: "pointer",
-              }}
-            >
-              <Flex justify="space-between">
-                <Badge variant={card.type === "Premium" ? "success" : "primary"}>
-                  {card.type || "Standard"}
-                </Badge>
-                {getStatusBadge(card.status)}
-              </Flex>
+            <div style={{ marginTop: "auto" }}>
+              <Heading variant="title-strong-s" style={{ fontSize: "1.25rem" }}>
+                {showCardDetails === card.id ? card.number : card.maskedNumber}
+              </Heading>
+              <Text variant="label-default-s">Balance: ${parseFloat(card.balance).toFixed(2)}</Text>
+              {card.expiry && <Text variant="label-default-s">Expires: {card.expiry}</Text>}
+            </div>
 
-              <Column gap="s" style={{ marginTop: "auto" }}>
-                <Heading variant="title-strong-s" style={{ fontSize: "1.25rem" }}>
-                  {showCardDetails === card.id ? card.number : card.maskedNumber}
-                </Heading>
-                <Text variant="label-default-s">Balance: ${parseFloat(card.balance).toFixed(2)}</Text>
-                {card.expiry && <Text variant="label-default-s">Expires: {card.expiry}</Text>}
-              </Column>
-
-              {showCardDetails === card.id && (
-                <Card radius="xl" padding="m" style={{ marginTop: "1rem", background: "var(--color-background-subtle)" }}>
-                  <Column gap="s">
-                    <Flex justify="space-between" align="center">
-                      <Text variant="label-default-s">Card Number</Text>
-                      <Flex gap="s" align="center">
-                        <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>{card.number}</Text>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          icon={copiedCard === card.id ? <CheckCircle /> : <Copy />}
-                          onClick={() => copyCardNumber(card.id, card.number)}
-                        >
-                          {copiedCard === card.id ? "Copied" : "Copy"}
-                        </Button>
-                      </Flex>
-                    </Flex>
-
-                    <Flex justify="space-between">
-                      <Text variant="label-default-s">CVV</Text>
-                      <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>{card.cvv}</Text>
-                    </Flex>
-
-                    {card.expiry && (
-                      <Flex justify="space-between">
-                        <Text variant="label-default-s">Expiry</Text>
-                        <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>{card.expiry}</Text>
-                      </Flex>
-                    )}
-                  </Column>
-                </Card>
-              )}
-
-              <Button
-                variant="outline"
-                onClick={() => setShowCardDetails(showCardDetails === card.id ? null : card.id)}
-                icon={showCardDetails === card.id ? <EyeOff /> : <Eye />}
-                style={{ marginTop: "0.5rem" }}
+            {/* Card Details Reveal */}
+            {showCardDetails === card.id && (
+              <Card
+                radius="xl"
+                padding="m"
+                style={{ marginTop: "0.5rem", background: "var(--color-background-subtle)" }}
               >
-                {showCardDetails === card.id ? "Hide Details" : "Show Details"}
-              </Button>
-            </Card>
-          ))}
-        </div>
-      </Column>
+                <Column gap="s">
+                  <Flex justify="space-between" align="center">
+                    <Text variant="label-default-s">Card Number</Text>
+                    <Flex gap="s" align="center">
+                      <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>
+                        {card.number}
+                      </Text>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        icon={copiedCard === card.id ? <CheckCircle /> : <Copy />}
+                        onClick={() => copyCardNumber(card.id, card.number)}
+                      >
+                        {copiedCard === card.id ? "Copied" : "Copy"}
+                      </Button>
+                    </Flex>
+                  </Flex>
+
+                  <Flex justify="space-between">
+                    <Text variant="label-default-s">CVV</Text>
+                    <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>{card.cvv}</Text>
+                  </Flex>
+
+                  {card.expiry && (
+                    <Flex justify="space-between">
+                      <Text variant="label-default-s">Expiry</Text>
+                      <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>{card.expiry}</Text>
+                    </Flex>
+                  )}
+                </Column>
+              </Card>
+            )}
+
+            <Button
+              variant="outline"
+              onClick={() => setShowCardDetails(showCardDetails === card.id ? null : card.id)}
+              icon={showCardDetails === card.id ? <EyeOff /> : <Eye />}
+              style={{ marginTop: "0.5rem" }}
+            >
+              {showCardDetails === card.id ? "Hide Details" : "Show Details"}
+            </Button>
+          </Card>
+        ))}
+      </div>
+
+      {/* Request New Card */}
+      <Button onClick={handleRequestCard} icon={<Plus />} fillWidth style={{ marginTop: "1rem" }}>
+        Request New Card
+      </Button>
     </Column>
   );
 }
+
