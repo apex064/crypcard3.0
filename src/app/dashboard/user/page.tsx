@@ -15,7 +15,6 @@ import {
 import {
   CreditCard,
   Plus,
-  ArrowUpCircle,
   Copy,
   CheckCircle,
 } from "lucide-react";
@@ -169,11 +168,6 @@ export default function UserDashboard() {
                     width: "100%",
                     transition: "all 0.3s ease",
                     cursor: "pointer",
-                    ":hover": {
-                      background: "linear-gradient(135deg, var(--color-background-subtle) 0%, var(--color-primary-subtle) 100%)",
-                      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-                      transform: "translateY(-2px)"
-                    }
                   }}
                 >
                   <Flex justify="space-between">
@@ -226,20 +220,17 @@ export default function UserDashboard() {
             background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
             transition: "all 0.3s ease",
             cursor: "pointer",
-            ":hover": {
-              background: "linear-gradient(135deg, var(--color-background-subtle) 0%, var(--color-primary-subtle) 100%)",
-              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-              transform: "translateY(-2px)"
-            }
           }}
         >
-          <Flex align="center" gap="s">
-            <Icon icon={ArrowUpCircle} size="m" />
-            <Heading variant="title-strong-m">Top Up</Heading>
+          {/* Top Up Heading as Pill Badge */}
+          <Flex align="center" gap="s" style={{ marginBottom: "1rem" }}>
+            <Badge variant="contrast" size="m">
+              Top Up
+            </Badge>
           </Flex>
 
           <form onSubmit={handleTopupSubmit}>
-            <Column gap="m" style={{ marginTop: "1rem" }}>
+            <Column gap="m">
               {/* Select Card */}
               <div>
                 <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
