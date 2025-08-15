@@ -156,11 +156,13 @@ export default function UserDashboard() {
                   key={card.id}
                   radius="2xl"
                   padding="m"
-                  shadow="l"
+                  shadow="xl"
                   style={{
-                    aspectRatio: "1.586", // like a physical credit card
-                    background:
-                      "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+                    aspectRatio: "1.586",
+                    background: "rgba(255, 255, 255, 0.08)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    border: "1px solid rgba(255, 255, 255, 0.15)",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
@@ -207,7 +209,18 @@ export default function UserDashboard() {
         </Column>
 
         {/* Top-Up Section */}
-        <Card radius="xl" shadow="xl" padding="l" style={{ flex: "1 1 350px" }}>
+        <Card
+          radius="xl"
+          shadow="xl"
+          padding="l"
+          style={{
+            flex: "1 1 350px",
+            background: "rgba(255, 255, 255, 0.08)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+          }}
+        >
           <Flex align="center" gap="s">
             <Icon icon={ArrowUpCircle} size="m" />
             <Heading variant="title-strong-m">Top Up</Heading>
