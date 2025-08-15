@@ -10,7 +10,7 @@ type HeaderProps = {
 };
 
 const navItems = [
-   { title: "Dashboard", href: "/dashboard", icon: BarChart3 }, // new link
+   { title: "Dashboard", href: "/dashboard/user", icon: BarChart3 }, // new link
   { title: "Cards", href: "/dashboard/user/cards", icon: CreditCard },
   { title: "Top-Up", href: "/dashboard/user/topup", icon: ArrowUpCircle },
   { title: "Transactions", href: "/dashboard/user/transactions", icon: BarChart3 },
