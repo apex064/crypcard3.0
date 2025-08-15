@@ -1,5 +1,4 @@
 // app/api/transactions/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
@@ -17,7 +16,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    // Combine transactions and all top-ups (pending, completed, failed) into one list
+    // Combine normal transactions and ALL top-ups
     const result = await query(
       `
       SELECT id, type, description, amount, status, date, time, card_number
