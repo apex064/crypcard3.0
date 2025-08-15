@@ -37,7 +37,7 @@ export default function UserDashboard() {
   const [token, setToken] = useState<string | null>(null);
   const [topupAmount, setTopupAmount] = useState("");
   const [txid, setTxid] = useState("");
-  const [cardId, setCardId] = useState("");
+  const [selectedCard, setSelectedCard] = useState<{ label: string; value: string } | null>(null);
   const [walletCopied, setWalletCopied] = useState(false);
   const [cards, setCards] = useState<CardType[]>([]);
 
@@ -91,7 +91,7 @@ export default function UserDashboard() {
   const handleTopupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) return alert("User not authenticated");
-    if (!cardId) return alert("Select a card.");
+    if (!selectedCard || !selectedCard.value) return alert("Select a card.");
     if (!topupAmount || parseFloat(topupAmount) < 10) return alert("Minimum top-up is $10.");
     if (!txid.trim()) return alert("TXID required.");
 
@@ -99,12 +99,14 @@ export default function UserDashboard() {
       const res = await fetch("/api/topup", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ amount: parseFloat(topupAmount), txid, cardId }),
+        body: JSON.stringify({ amount: parseFloat(topupAmount), txid, cardId: selectedCard.value }),
       });
       const data = await res.json();
       if (res.ok) {
         alert("Top-up submitted!");
-        setTopupAmount(""); setTxid(""); setCardId("");
+        setTopupAmount("");
+        setTxid("");
+        setSelectedCard(null);
       } else alert("Error: " + (data.error ?? "Unknown"));
     } catch (err) {
       alert("Failed to submit top-up: " + err);
@@ -137,7 +139,7 @@ export default function UserDashboard() {
             <Icon icon={CreditCard} size="m" />
             <Heading variant="title-strong-m">My Cards</Heading>
           </Flex>
-          
+
           <Column gap="m" style={{ marginTop: "1rem" }}>
             {cards.length === 0 ? (
               <Text>No cards found.</Text>
@@ -154,15 +156,15 @@ export default function UserDashboard() {
                           {card.status}
                         </Badge>
                       </Flex>
-                      
+
                       <Heading variant="title-strong-s">{card.maskedNumber}</Heading>
-                      
+
                       <Text variant="label-default-s">CVV: {card.cvv}</Text>
-                      
+
                       <Text variant="label-default-s">
                         Created: {new Date(card.created_at).toLocaleDateString()}
                       </Text>
-                      
+
                       <Flex justify="space-between" style={{ marginTop: "0.5rem" }}>
                         <Column>
                           <Text variant="label-default-s">Balance</Text>
@@ -174,10 +176,10 @@ export default function UserDashboard() {
                 ))}
               </Column>
             )}
-            
-            <Button 
-              onClick={handleRequestCard} 
-              icon={<Plus />} 
+
+            <Button
+              onClick={handleRequestCard}
+              icon={<Plus />}
               fillWidth
               style={{ marginTop: "1rem" }}
             >
@@ -192,7 +194,7 @@ export default function UserDashboard() {
             <Icon icon={ArrowUpCircle} size="m" />
             <Heading variant="title-strong-m">Top Up </Heading>
           </Flex>
-          
+
           <form onSubmit={handleTopupSubmit}>
             <Column gap="m" style={{ marginTop: "1rem" }}>
               <div>
@@ -200,8 +202,8 @@ export default function UserDashboard() {
                   Select Card
                 </Text>
                 <Select
-                  value={cards.find(card => card.id === cardId) || ""}
-                  onChange={(val: any) => setCardId(val?.value ?? "")}
+                  value={selectedCard}
+                  onChange={(val: any) => setSelectedCard(val)}
                   required
                   options={[
                     { label: "-- Select a card --", value: "" },
@@ -243,8 +245,8 @@ export default function UserDashboard() {
                   >
                     {walletAddress}
                   </Text>
-                  <Button 
-                    onClick={copyWalletAddress} 
+                  <Button
+                    onClick={copyWalletAddress}
                     icon={walletCopied ? <CheckCircle /> : <Copy />}
                     variant="outline"
                   >
@@ -266,8 +268,8 @@ export default function UserDashboard() {
                 />
               </div>
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 fillWidth
                 style={{ marginTop: "0.5rem" }}
               >
