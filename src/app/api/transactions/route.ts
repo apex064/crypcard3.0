@@ -17,9 +17,30 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
+    // Combine normal transactions and top-ups into a single result
     const result = await query(
-      `SELECT id, type, description, amount, status, date, time, card_number 
-       FROM transactions WHERE user_id = $1 ORDER BY date DESC, time DESC`,
+      `
+      SELECT id, type, description, amount, status, date, time, card_number
+      FROM transactions
+      WHERE user_id = $1
+
+      UNION ALL
+
+      SELECT 
+        'TOPUP-' || tp.id AS id,
+        'topup' AS type,
+        'Card Top-Up' AS description,
+        tp.amount,
+        tp.status,
+        TO_CHAR(tp.created_at, 'YYYY-MM-DD') AS date,
+        TO_CHAR(tp.created_at, 'HH24:MI') AS time,
+        c.card_number
+      FROM topups tp
+      JOIN cards c ON tp.card_id = c.id
+      WHERE tp.user_id = $1
+
+      ORDER BY date DESC, time DESC
+      `,
       [user.id]
     );
 
@@ -31,11 +52,12 @@ export async function GET(req: NextRequest) {
       status: t.status,
       date: t.date,
       time: t.time,
-      card: "**** " + t.card_number.slice(-4),
+      card: t.card_number ? "**** " + t.card_number.slice(-4) : null,
     }));
 
     return NextResponse.json({ transactions });
   } catch (error: any) {
+    console.error("GET /api/transactions error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -69,6 +91,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ message: "Transaction recorded", id });
   } catch (error: any) {
+    console.error("POST /api/transactions error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
