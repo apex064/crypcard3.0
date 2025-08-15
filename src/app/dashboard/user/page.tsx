@@ -157,19 +157,23 @@ export default function UserDashboard() {
                   radius="2xl"
                   padding="m"
                   shadow="l"
-                  className="hover-card"
                   style={{
                     borderRadius: "var(--radius-2xl, 24px)",
                     overflow: "hidden",
                     aspectRatio: "1.586",
-                    background:
-                      "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+                    background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
                     position: "relative",
                     width: "100%",
-                    transition: "background 0.3s ease",
+                    transition: "all 0.3s ease",
+                    cursor: "pointer",
+                    ":hover": {
+                      background: "linear-gradient(135deg, var(--color-background-subtle) 0%, var(--color-primary-subtle) 100%)",
+                      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+                      transform: "translateY(-2px)"
+                    }
                   }}
                 >
                   <Flex justify="space-between">
@@ -217,12 +221,16 @@ export default function UserDashboard() {
           radius="xl"
           shadow="xl"
           padding="l"
-          className="hover-card"
           style={{
             flex: "1 1 350px",
-            background:
-              "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
-            transition: "background 0.3s ease",
+            background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+            transition: "all 0.3s ease",
+            cursor: "pointer",
+            ":hover": {
+              background: "linear-gradient(135deg, var(--color-background-subtle) 0%, var(--color-primary-subtle) 100%)",
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+              transform: "translateY(-2px)"
+            }
           }}
         >
           <Flex align="center" gap="s">
@@ -322,20 +330,6 @@ export default function UserDashboard() {
           </form>
         </Card>
       </Flex>
-
-      {/* Hover Styles */}
-      <style jsx>{`
-        .hover-card {
-          transition: background 0.3s ease;
-        }
-        .hover-card:hover {
-          background: linear-gradient(
-            135deg,
-            var(--color-background-subtle) 0%,
-            var(--color-background-default) 100%
-          ) !important;
-        }
-      `}</style>
     </Column>
   );
 }
