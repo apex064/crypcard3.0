@@ -19,7 +19,7 @@ type CardType = {
   number: string;
   maskedNumber: string;
   cvv: string;
-  balance: number | string; // allow string from API
+  balance: number | string;
   status: string;
   type: string;
   created_at: string;
@@ -27,7 +27,7 @@ type CardType = {
 
 type TopupHistoryType = {
   id: string;
-  amount: number | string; // allow string from API
+  amount: number | string;
   txid: string;
   status: string;
   created_at: string;
@@ -138,6 +138,12 @@ export default function TopUpPage() {
     }
   };
 
+  const gridStyle = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gap: "1rem",
+  };
+
   return (
     <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
       <Header />
@@ -145,19 +151,17 @@ export default function TopUpPage() {
       <Heading variant="title-strong-l">Top Up</Heading>
       <Text>Add funds to your virtual cards using USDT TRC20</Text>
 
-      <Flex gap="l" wrap="wrap" style={{ marginTop: "1rem" }}>
+      <Flex
+        gap="l"
+        wrap="wrap"
+        style={{ marginTop: "1rem", flexDirection: "column" }}
+      >
         {/* Cards Section */}
-        <Column style={{ flex: "1 1 350px" }} gap="m">
+        <Column style={{ flex: "1 1 100%", gap: "m" }}>
           <Flex align="center" gap="s" style={{ marginBottom: "0.5rem" }}>
             <Badge variant="contrast">Select Card</Badge>
           </Flex>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "1rem",
-            }}
-          >
+          <div style={{ ...gridStyle }}>
             {cards.map((card) => (
               <Card
                 key={card.id}
@@ -189,7 +193,10 @@ export default function TopUpPage() {
                 </Flex>
                 <Heading variant="title-strong-s">{card.maskedNumber}</Heading>
                 <Text>
-                  Balance: ${isNaN(Number(card.balance)) ? "0.00" : Number(card.balance).toFixed(2)}
+                  Balance: $
+                  {isNaN(Number(card.balance))
+                    ? "0.00"
+                    : Number(card.balance).toFixed(2)}
                 </Text>
               </Card>
             ))}
@@ -197,7 +204,7 @@ export default function TopUpPage() {
         </Column>
 
         {/* Top-Up Form */}
-        <Column style={{ flex: "1 1 350px" }} gap="m">
+        <Column style={{ flex: "1 1 100%", gap: "m" }}>
           <Card radius="xl" padding="l" shadow="xl">
             <Flex align="center" gap="s">
               <ArrowUpCircle size={24} />
@@ -271,13 +278,7 @@ export default function TopUpPage() {
       {/* Top-Up History */}
       <Column gap="m" style={{ marginTop: "2rem" }}>
         <Heading variant="title-strong-m">Top-Up History</Heading>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "1rem",
-          }}
-        >
+        <div style={{ ...gridStyle }}>
           {history.length === 0 && <Text>No top-ups yet.</Text>}
           {history.map((h) => (
             <Card key={h.id} radius="xl" padding="m" shadow="l">
