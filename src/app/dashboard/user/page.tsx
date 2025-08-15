@@ -200,8 +200,8 @@ export default function UserDashboard() {
                   Select Card
                 </Text>
                 <Select
-                  value={cardId}
-                  onChange={(val) => setCardId(val as string)}
+                  value={cards.find(card => card.id === cardId) || ""}
+                  onChange={(val: any) => setCardId(val?.value ?? "")}
                   required
                   options={[
                     { label: "-- Select a card --", value: "" },
