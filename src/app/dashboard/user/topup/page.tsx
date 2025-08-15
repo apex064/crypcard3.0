@@ -154,14 +154,14 @@ export default function TopUpPage() {
       <Flex
         gap="l"
         wrap="wrap"
-        style={{ marginTop: "1rem", flexDirection: "column" }}
+        style={{ marginTop: "1rem", justifyContent: "space-between" }}
       >
         {/* Cards Section */}
-        <Column style={{ flex: "1 1 100%", gap: "m" }}>
+        <Column style={{ flex: "1 1 400px", minWidth: "300px" }} gap="m">
           <Flex align="center" gap="s" style={{ marginBottom: "0.5rem" }}>
             <Badge variant="contrast">Select Card</Badge>
           </Flex>
-          <div style={{ ...gridStyle }}>
+          <div style={gridStyle}>
             {cards.map((card) => (
               <Card
                 key={card.id}
@@ -194,9 +194,7 @@ export default function TopUpPage() {
                 <Heading variant="title-strong-s">{card.maskedNumber}</Heading>
                 <Text>
                   Balance: $
-                  {isNaN(Number(card.balance))
-                    ? "0.00"
-                    : Number(card.balance).toFixed(2)}
+                  {isNaN(Number(card.balance)) ? "0.00" : Number(card.balance).toFixed(2)}
                 </Text>
               </Card>
             ))}
@@ -204,7 +202,7 @@ export default function TopUpPage() {
         </Column>
 
         {/* Top-Up Form */}
-        <Column style={{ flex: "1 1 100%", gap: "m" }}>
+        <Column style={{ flex: "1 1 400px", minWidth: "300px" }} gap="m">
           <Card radius="xl" padding="l" shadow="xl">
             <Flex align="center" gap="s">
               <ArrowUpCircle size={24} />
@@ -278,7 +276,7 @@ export default function TopUpPage() {
       {/* Top-Up History */}
       <Column gap="m" style={{ marginTop: "2rem" }}>
         <Heading variant="title-strong-m">Top-Up History</Heading>
-        <div style={{ ...gridStyle }}>
+        <div style={gridStyle}>
           {history.length === 0 && <Text>No top-ups yet.</Text>}
           {history.map((h) => (
             <Card key={h.id} radius="xl" padding="m" shadow="l">
