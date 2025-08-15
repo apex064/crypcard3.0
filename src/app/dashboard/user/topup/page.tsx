@@ -304,25 +304,18 @@ export default function TopUpPage() {
             <Flex justify="space-between" align="flex-start">
               <Column>
                 <Text>
-                  $
-                  {isNaN(Number(h.amount))
-                    ? "0.00"
-                    : Number(h.amount).toFixed(2)}{" "}
-                  USDT
+                  ${isNaN(Number(h.amount)) ? "0.00" : Number(h.amount).toFixed(2)} USDT
                 </Text>
                 <Text variant="label-default-s">
                   {new Date(h.created_at).toLocaleString()}
                 </Text>
-                <Text
-                  variant="label-default-s"
-                  style={{ fontFamily: "monospace" }}
-                >
+                <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>
                   {h.txid.substring(0, 20)}...
                 </Text>
               </Column>
-              <div style={{ marginLeft: "auto", alignSelf: "center" }}>
+              <Column justify="center" style={{ alignItems: "flex-end" }}>
                 {getStatusBadge(h.status)}
-              </div>
+              </Column>
             </Flex>
           </Card>
         ))}
