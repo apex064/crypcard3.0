@@ -11,7 +11,7 @@ import {
   Input,
   Badge,
 } from "@once-ui-system/core";
-import { ArrowUpCircle, Copy, CheckCircle } from "lucide-react";
+import { Copy, CheckCircle, Plus } from "lucide-react";
 import Header from "@/components/Header";
 
 type CardType = {
@@ -141,13 +141,18 @@ export default function TopUpPage() {
     <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
       <Header />
 
-      <Heading variant="title-strong-l">Top Up</Heading>
+      {/* Top-Up Title */}
+      <Flex align="center" gap="s">
+        <Badge variant="contrast" size="m" style={{ borderRadius: "50px" }}>
+          Top Up
+        </Badge>
+      </Flex>
       <Text>Add funds to your virtual cards using USDT TRC20</Text>
 
+      {/* Cards & Form */}
       <Flex gap="l" wrap="wrap" style={{ marginTop: "1rem" }}>
-        {/* Cards Section */}
+        {/* Cards */}
         <Column style={{ flex: "1 1 350px" }} gap="m">
-          <Text>Select Card</Text>
           <div
             style={{
               display: "grid",
@@ -165,14 +170,11 @@ export default function TopUpPage() {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
-                  width: "100%",
                   cursor: "pointer",
                   background:
                     "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
                   border:
-                    cardId === card.id
-                      ? "2px solid var(--color-primary-default)"
-                      : "none",
+                    cardId === card.id ? "2px solid var(--color-primary-default)" : "none",
                 }}
                 onClick={() => setCardId(card.id)}
               >
@@ -258,42 +260,45 @@ export default function TopUpPage() {
       </Flex>
 
       {/* Top-Up History */}
-      <Column gap="m" style={{ marginTop: "2rem" }}>
-        <Heading variant="title-strong-m">Top-Up History</Heading>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "1rem",
-          }}
-        >
-          {history.length === 0 && <Text>No top-ups yet.</Text>}
-          {history.map((h) => (
-            <Card
-              key={h.id}
-              radius="3xl"
-              padding="m"
-              shadow="l"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Column>
-                <Text style={{ fontWeight: 600 }}>
-                  ${isNaN(Number(h.amount)) ? "0.00" : Number(h.amount).toFixed(2)} USDT
-                </Text>
-                <Text variant="label-default-s">{new Date(h.created_at).toLocaleString()}</Text>
-                <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>
-                  TXID: {h.txid.substring(0, 20)}...
-                </Text>
-              </Column>
-              <div>{getStatusBadge(h.status)}</div>
-            </Card>
-          ))}
-        </div>
-      </Column>
+      <Flex align="center" gap="s" style={{ marginTop: "2rem" }}>
+        <Badge variant="contrast" size="m" style={{ borderRadius: "50px" }}>
+          Top-Up History
+        </Badge>
+      </Flex>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "1rem",
+          marginTop: "1rem",
+        }}
+      >
+        {history.length === 0 && <Text>No top-ups yet.</Text>}
+        {history.map((h) => (
+          <Card
+            key={h.id}
+            radius="3xl"
+            padding="m"
+            shadow="l"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Column>
+              <Text style={{ fontWeight: 600 }}>
+                ${isNaN(Number(h.amount)) ? "0.00" : Number(h.amount).toFixed(2)} USDT
+              </Text>
+              <Text variant="label-default-s">{new Date(h.created_at).toLocaleString()}</Text>
+              <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>
+                TXID: {h.txid.substring(0, 20)}...
+              </Text>
+            </Column>
+            <div>{getStatusBadge(h.status)}</div>
+          </Card>
+        ))}
+      </div>
     </Column>
   );
 }
