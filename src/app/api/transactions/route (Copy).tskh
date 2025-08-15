@@ -1,0 +1,75 @@
+// app/api/transactions/route.ts
+
+import { NextRequest, NextResponse } from "next/server";
+import { query } from "@/lib/db";
+import { verifyToken } from "@/lib/auth";
+
+export async function GET(req: NextRequest) {
+  try {
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const user = verifyToken(token);
+    if (!user) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    const result = await query(
+      `SELECT id, type, description, amount, status, date, time, card_number 
+       FROM transactions WHERE user_id = $1 ORDER BY date DESC, time DESC`,
+      [user.id]
+    );
+
+    const transactions = result.rows.map((t) => ({
+      id: t.id,
+      type: t.type,
+      description: t.description,
+      amount: parseFloat(t.amount),
+      status: t.status,
+      date: t.date,
+      time: t.time,
+      card: "**** " + t.card_number.slice(-4),
+    }));
+
+    return NextResponse.json({ transactions });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const user = verifyToken(token);
+    if (!user) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { type, description, amount, status, card_number } = body;
+
+    const date = new Date().toISOString().split("T")[0];
+    const time = new Date().toTimeString().split(" ")[0].slice(0, 5);
+
+    const id = "TXN" + Date.now().toString().slice(-6);
+
+    await query(
+      `INSERT INTO transactions (id, user_id, type, description, amount, status, date, time, card_number)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+      [id, user.id, type, description, amount, status, date, time, card_number]
+    );
+
+    return NextResponse.json({ message: "Transaction recorded", id });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
