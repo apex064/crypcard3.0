@@ -12,7 +12,13 @@ import {
   Icon,
   Badge,
 } from "@once-ui-system/core";
-import { CreditCard, Plus, ArrowUpCircle, Copy, CheckCircle } from "lucide-react";
+import {
+  CreditCard,
+  Plus,
+  ArrowUpCircle,
+  Copy,
+  CheckCircle,
+} from "lucide-react";
 import Header from "@/components/Header";
 
 type CardType = {
@@ -120,42 +126,54 @@ export default function UserDashboard() {
   };
 
   return (
-    <Column fillWidth fillHeight style={{ minHeight: "100vh", background: "var(--color-background)" }}>
+    <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
+      {/* Header */}
       <Header onLogout={handleLogout} />
 
       {/* Section Header */}
-      <Flex align="center" gap="s" style={{ marginBottom: "0.5rem", padding: "0 1rem" }}>
-        <Badge variant="contrast" size="m">My Cards</Badge>
+      <Flex align="center" gap="s" style={{ marginBottom: "0.5rem" }}>
+        <Badge variant="contrast" size="m">
+          My Cards
+        </Badge>
       </Flex>
 
-      <Flex gap="l" wrap="wrap" style={{ padding: "0 1rem" }}>
+      {/* Cards & Top-Up Section */}
+      <Flex gap="l" wrap="wrap" fillWidth>
         {/* Cards Section */}
         <Column style={{ flex: "1 1 350px" }} gap="m">
           {cards.length === 0 ? (
             <Text>No cards found.</Text>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: "1rem",
+              }}
+            >
               {cards.map((card) => (
                 <Card
                   key={card.id}
-                  radius="xl"
-                  shadow="xl"
-                  padding="l"
+                  radius="2xl"
+                  padding="m"
+                  shadow="l"
                   style={{
+                    borderRadius: "var(--radius-2xl, 24px)",
+                    overflow: "hidden",
+                    aspectRatio: "1.586",
+                    background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+                    display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
-                    display: "flex",
-                    transition: "all 0.2s",
+                    position: "relative",
+                    width: "100%",
+                    transition: "all 0.3s ease",
                     cursor: "pointer",
-                    background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.background = "linear-gradient(135deg, var(--color-background-subtle) 0%, var(--color-primary-subtle) 100%)";
-                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLDivElement).style.background = "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)";
-                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
+                    ":hover": {
+                      background: "linear-gradient(135deg, var(--color-background-subtle) 0%, var(--color-primary-subtle) 100%)",
+                      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+                      transform: "translateY(-2px)"
+                    }
                   }}
                 >
                   <Flex justify="space-between">
@@ -168,7 +186,9 @@ export default function UserDashboard() {
                   </Flex>
 
                   <div style={{ marginTop: "auto" }}>
-                    <Heading variant="title-strong-s">{card.maskedNumber}</Heading>
+                    <Heading variant="title-strong-s" style={{ fontSize: "1.25rem" }}>
+                      {card.maskedNumber}
+                    </Heading>
                     <Text variant="label-default-s">CVV: {card.cvv}</Text>
                     <Text variant="label-default-s">
                       Created: {new Date(card.created_at).toLocaleDateString()}
@@ -186,7 +206,12 @@ export default function UserDashboard() {
             </div>
           )}
 
-          <Button onClick={handleRequestCard} icon={<Plus />} fillWidth>
+          <Button
+            onClick={handleRequestCard}
+            icon={<Plus />}
+            fillWidth
+            style={{ marginTop: "1rem" }}
+          >
             Request New Card
           </Button>
         </Column>
@@ -198,19 +223,14 @@ export default function UserDashboard() {
           padding="l"
           style={{
             flex: "1 1 350px",
-            display: "flex",
-            flexDirection: "column",
-            transition: "all 0.2s",
-            cursor: "pointer",
             background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLDivElement).style.background = "linear-gradient(135deg, var(--color-background-subtle) 0%, var(--color-primary-subtle) 100%)";
-            (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLDivElement).style.background = "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)";
-            (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
+            transition: "all 0.3s ease",
+            cursor: "pointer",
+            ":hover": {
+              background: "linear-gradient(135deg, var(--color-background-subtle) 0%, var(--color-primary-subtle) 100%)",
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+              transform: "translateY(-2px)"
+            }
           }}
         >
           <Flex align="center" gap="s">
@@ -218,40 +238,92 @@ export default function UserDashboard() {
             <Heading variant="title-strong-m">Top Up</Heading>
           </Flex>
 
-          <form onSubmit={handleTopupSubmit} style={{ marginTop: "1rem" }}>
-            <Column gap="m">
+          <form onSubmit={handleTopupSubmit}>
+            <Column gap="m" style={{ marginTop: "1rem" }}>
+              {/* Select Card */}
               <div>
-                <Text>Select Card</Text>
-                <Input value={cardId} onChange={(e) => setCardId(e.target.value)} placeholder="Enter card ID" />
+                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                  Select Card
+                </Text>
+                <select
+                  value={cardId}
+                  onChange={(e) => setCardId(e.target.value)}
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    borderRadius: "0.5rem",
+                    backgroundColor: "var(--color-background-default)",
+                    border: "1px solid var(--color-border-default)",
+                    color: "var(--color-text-default)",
+                  }}
+                >
+                  <option value="">-- Select a card --</option>
+                  {cards.map((card) => (
+                    <option key={card.id} value={card.id}>
+                      {card.maskedNumber} (${card.balance.toFixed(2)})
+                    </option>
+                  ))}
+                </select>
               </div>
+
+              {/* Amount */}
               <div>
-                <Text>Amount (USD)</Text>
-                <Input type="number" value={topupAmount} onChange={(e) => setTopupAmount(e.target.value)} min={10} />
+                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                  Amount (USD)
+                </Text>
+                <Input
+                  type="number"
+                  placeholder="Enter amount"
+                  value={topupAmount}
+                  onChange={(e) => setTopupAmount(e.target.value)}
+                  required
+                  min={10}
+                />
               </div>
+
+              {/* Wallet Address */}
               <div>
-                <Text>USDT TRC20 Wallet Address</Text>
-                <Flex gap="s" align="center">
+                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                  USDT TRC20 Wallet Address
+                </Text>
+                <Flex gap="s" vertical="center">
                   <Text
                     style={{
                       flex: 1,
+                      wordBreak: "break-all",
                       padding: "0.75rem",
                       borderRadius: "0.5rem",
                       background: "var(--color-background-subtle)",
-                      wordBreak: "break-all",
                     }}
                   >
                     {walletAddress}
                   </Text>
-                  <Button onClick={copyWalletAddress} variant="outline">
-                    {walletCopied ? <CheckCircle /> : <Copy />}
+                  <Button
+                    onClick={copyWalletAddress}
+                    icon={walletCopied ? <CheckCircle /> : <Copy />}
+                    variant="outline"
+                  >
+                    {walletCopied ? "Copied!" : "Copy"}
                   </Button>
                 </Flex>
               </div>
+
+              {/* TXID */}
               <div>
-                <Text>Transaction ID (TXID)</Text>
-                <Input value={txid} onChange={(e) => setTxid(e.target.value)} placeholder="Enter transaction ID" />
+                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                  Transaction ID (TXID)
+                </Text>
+                <Input
+                  type="text"
+                  placeholder="Enter transaction ID"
+                  value={txid}
+                  onChange={(e) => setTxid(e.target.value)}
+                  required
+                />
               </div>
-              <Button type="submit" fillWidth>
+
+              <Button type="submit" fillWidth style={{ marginTop: "0.5rem" }}>
                 Submit Top-Up Request
               </Button>
             </Column>
