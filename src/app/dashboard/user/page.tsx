@@ -9,7 +9,6 @@ import {
   Text,
   Button,
   Input,
-  Select,
   Icon,
   Badge,
 } from "@once-ui-system/core";
@@ -37,7 +36,7 @@ export default function UserDashboard() {
   const [token, setToken] = useState<string | null>(null);
   const [topupAmount, setTopupAmount] = useState("");
   const [txid, setTxid] = useState("");
-  const [selectedCard, setSelectedCard] = useState<{ label: string; value: string } | null>(null);
+  const [cardId, setCardId] = useState("");
   const [walletCopied, setWalletCopied] = useState(false);
   const [cards, setCards] = useState<CardType[]>([]);
 
@@ -91,7 +90,7 @@ export default function UserDashboard() {
   const handleTopupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) return alert("User not authenticated");
-    if (!selectedCard || !selectedCard.value) return alert("Select a card.");
+    if (!cardId) return alert("Select a card.");
     if (!topupAmount || parseFloat(topupAmount) < 10) return alert("Minimum top-up is $10.");
     if (!txid.trim()) return alert("TXID required.");
 
@@ -99,14 +98,14 @@ export default function UserDashboard() {
       const res = await fetch("/api/topup", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ amount: parseFloat(topupAmount), txid, cardId: selectedCard.value }),
+        body: JSON.stringify({ amount: parseFloat(topupAmount), txid, cardId }),
       });
       const data = await res.json();
       if (res.ok) {
         alert("Top-up submitted!");
         setTopupAmount("");
         setTxid("");
-        setSelectedCard(null);
+        setCardId("");
       } else alert("Error: " + (data.error ?? "Unknown"));
     } catch (err) {
       alert("Failed to submit top-up: " + err);
@@ -197,22 +196,31 @@ export default function UserDashboard() {
 
           <form onSubmit={handleTopupSubmit}>
             <Column gap="m" style={{ marginTop: "1rem" }}>
+              {/* Native styled select */}
               <div>
                 <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
                   Select Card
                 </Text>
-                <Select
-                  value={selectedCard}
-                  onChange={(val: any) => setSelectedCard(val)}
+                <select
+                  value={cardId}
+                  onChange={(e) => setCardId(e.target.value)}
                   required
-                  options={[
-                    { label: "-- Select a card --", value: "" },
-                    ...cards.map((card) => ({
-                      label: `${card.maskedNumber} ($${card.balance.toFixed(2)})`,
-                      value: card.id,
-                    })),
-                  ]}
-                />
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    borderRadius: "0.5rem",
+                    backgroundColor: "var(--color-background-default)",
+                    border: "1px solid var(--color-border-default)",
+                    color: "var(--color-text-default)",
+                  }}
+                >
+                  <option value="">-- Select a card --</option>
+                  {cards.map((card) => (
+                    <option key={card.id} value={card.id}>
+                      {card.maskedNumber} (${card.balance.toFixed(2)})
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
