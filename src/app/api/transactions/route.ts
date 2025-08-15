@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
         TO_CHAR(tp.created_at, 'HH24:MI') AS time,
         c.card_number
       FROM topups tp
-      JOIN cards c ON tp.card_id = c.id
+      LEFT JOIN cards c ON tp.card_id = c.id
       WHERE tp.user_id = $1
 
       ORDER BY date DESC, time DESC
