@@ -45,14 +45,12 @@ export default function TopUpPage() {
 
   const walletAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";
 
-  // --- Authentication ---
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (!storedToken) window.location.href = "/login";
     else setToken(storedToken);
   }, []);
 
-  // --- Fetch Cards & History ---
   useEffect(() => {
     if (!token) return;
 
@@ -84,7 +82,6 @@ export default function TopUpPage() {
     fetchHistory();
   }, [token]);
 
-  // --- Top-Up Submission ---
   const handleTopupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) return alert("User not authenticated");
@@ -100,11 +97,7 @@ export default function TopUpPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          cardId,
-          amount: parseFloat(topupAmount),
-          txid,
-        }),
+        body: JSON.stringify({ cardId, amount: parseFloat(topupAmount), txid }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -112,7 +105,6 @@ export default function TopUpPage() {
         setTopupAmount("");
         setTxid("");
         setCardId("");
-        // Refresh history
         const updated = await fetch("/api/topup/history", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -126,22 +118,20 @@ export default function TopUpPage() {
     }
   };
 
-  // --- Copy Wallet ---
   const copyWalletAddress = () => {
     navigator.clipboard.writeText(walletAddress);
     setWalletCopied(true);
     setTimeout(() => setWalletCopied(false), 2000);
   };
 
-  // --- Status Badge ---
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case "completed":
-        return <Badge variant="success">Completed</Badge>;
+        return <Badge variant="success">{status}</Badge>;
       case "pending":
-        return <Badge variant="warning">Pending</Badge>;
+        return <Badge variant="warning">{status}</Badge>;
       case "failed":
-        return <Badge variant="danger">Failed</Badge>;
+        return <Badge variant="danger">{status}</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -151,7 +141,7 @@ export default function TopUpPage() {
     <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
       <Header />
 
-      {/* Top-Up Cards */}
+      {/* Cards Section */}
       <Flex gap="l" wrap="wrap" fillWidth>
         <Column style={{ flex: "1 1 100%", gap: "m" }}>
           <Heading variant="title-strong-l">My Cards</Heading>
@@ -162,7 +152,7 @@ export default function TopUpPage() {
               {cards.map((card) => (
                 <Card
                   key={card.id}
-                  radius="2xl"
+                  radius="3xl"
                   padding="m"
                   shadow="l"
                   style={{
@@ -195,7 +185,7 @@ export default function TopUpPage() {
         {/* Top-Up Form */}
         <Column style={{ flex: "1 1 100%", gap: "m" }}>
           <Heading variant="title-strong-l">Top Up</Heading>
-          <Card radius="xl" padding="l" shadow="xl">
+          <Card radius="3xl" padding="l" shadow="xl">
             <form onSubmit={handleTopupSubmit}>
               <Column gap="m">
                 <Text>Select Card</Text>
@@ -206,7 +196,7 @@ export default function TopUpPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    borderRadius: "0.5rem",
+                    borderRadius: "1rem",
                     border: "1px solid var(--color-border-default)",
                   }}
                 >
@@ -234,7 +224,7 @@ export default function TopUpPage() {
                     style={{
                       flex: 1,
                       padding: "0.75rem",
-                      borderRadius: "0.5rem",
+                      borderRadius: "1rem",
                       background: "var(--color-background-subtle)",
                       wordBreak: "break-all",
                     }}
@@ -272,17 +262,23 @@ export default function TopUpPage() {
             <Text>No top-ups yet.</Text>
           ) : (
             history.map((h) => (
-              <Card key={h.id} radius="xl" padding="m" shadow="l" style={{ width: "100%" }}>
-                <Flex justify="space-between" align="center">
-                  <Column>
-                    <Text>${isNaN(Number(h.amount)) ? "0.00" : Number(h.amount).toFixed(2)} USDT</Text>
-                    <Text variant="label-default-s">{new Date(h.created_at).toLocaleString()}</Text>
-                    <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>
-                      {h.txid.substring(0, 20)}...
-                    </Text>
-                  </Column>
-                  {getStatusBadge(h.status)}
-                </Flex>
+              <Card
+                key={h.id}
+                radius="3xl"
+                padding="m"
+                shadow="l"
+                style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+              >
+                <Column>
+                  <Text style={{ fontWeight: 600 }}>
+                    ${isNaN(Number(h.amount)) ? "0.00" : Number(h.amount).toFixed(2)} USDT
+                  </Text>
+                  <Text variant="label-default-s">{new Date(h.created_at).toLocaleString()}</Text>
+                  <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>
+                    TXID: {h.txid.substring(0, 20)}...
+                  </Text>
+                </Column>
+                <div>{getStatusBadge(h.status)}</div>
               </Card>
             ))
           )}
