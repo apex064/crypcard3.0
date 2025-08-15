@@ -54,7 +54,9 @@ export default function UserDashboard() {
     if (!token) return;
     const fetchCards = async () => {
       try {
-        const res = await fetch("/api/cards", { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch("/api/cards", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (!res.ok) throw new Error("Failed to fetch cards");
         const data = await res.json();
         setCards(data.cards ?? []);
@@ -71,13 +73,18 @@ export default function UserDashboard() {
     try {
       const res = await fetch("/api/cards", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({}),
       });
       const data = await res.json();
       if (res.ok) {
         alert("Card request submitted!");
-        const updatedRes = await fetch("/api/cards", { headers: { Authorization: `Bearer ${token}` } });
+        const updatedRes = await fetch("/api/cards", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const updatedData = await updatedRes.json();
         if (updatedRes.ok) setCards(updatedData.cards);
       } else alert("Error: " + (data.error ?? "Unknown"));
@@ -91,14 +98,22 @@ export default function UserDashboard() {
     e.preventDefault();
     if (!token) return alert("User not authenticated");
     if (!cardId) return alert("Select a card.");
-    if (!topupAmount || parseFloat(topupAmount) < 10) return alert("Minimum top-up is $10.");
+    if (!topupAmount || parseFloat(topupAmount) < 10)
+      return alert("Minimum top-up is $10.");
     if (!txid.trim()) return alert("TXID required.");
 
     try {
       const res = await fetch("/api/topup", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ amount: parseFloat(topupAmount), txid, cardId }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          amount: parseFloat(topupAmount),
+          txid,
+          cardId,
+        }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -126,7 +141,13 @@ export default function UserDashboard() {
   };
 
   return (
-    <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
+    <Column
+      fillWidth
+      fillHeight
+      gap="l"
+      padding="l"
+      style={{ minHeight: "100vh" }}
+    >
       {/* Header */}
       <Header onLogout={handleLogout} />
 
@@ -134,57 +155,91 @@ export default function UserDashboard() {
       <Flex gap="l" wrap="wrap" fillWidth>
         {/* Cards Section */}
         <Card radius="xl" shadow="xl" padding="l" style={{ flex: "1 1 350px" }}>
-          <Flex align="center" gap="s">
-            <Icon icon={CreditCard} size="m" />
-            <Heading variant="title-strong-m">My Cards</Heading>
+          {/* Black pill style heading */}
+          <Flex align="center" gap="s" style={{ marginBottom: "1rem" }}>
+            <Badge variant="contrast" size="m">
+              My Cards
+            </Badge>
           </Flex>
 
-          <Column gap="m" style={{ marginTop: "1rem" }}>
-            {cards.length === 0 ? (
-              <Text>No cards found.</Text>
-            ) : (
-              <Column gap="s">
-                {cards.map((card) => (
-                  <Card key={card.id} radius="lg" padding="m">
-                    <Column gap="s">
-                      <Flex justify="space-between">
-                        <Badge variant={card.type === "Premium" ? "success" : "primary"}>
-                          {card.type}
-                        </Badge>
-                        <Badge variant={card.status === "active" ? "success" : "warning"}>
-                          {card.status}
-                        </Badge>
-                      </Flex>
-
-                      <Heading variant="title-strong-s">{card.maskedNumber}</Heading>
-
-                      <Text variant="label-default-s">CVV: {card.cvv}</Text>
-
-                      <Text variant="label-default-s">
-                        Created: {new Date(card.created_at).toLocaleDateString()}
-                      </Text>
-
-                      <Flex justify="space-between" style={{ marginTop: "0.5rem" }}>
-                        <Column>
-                          <Text variant="label-default-s">Balance</Text>
-                          <Text>${card.balance.toFixed(2)}</Text>
-                        </Column>
-                      </Flex>
-                    </Column>
-                  </Card>
-                ))}
-              </Column>
-            )}
-
-            <Button
-              onClick={handleRequestCard}
-              icon={<Plus />}
-              fillWidth
-              style={{ marginTop: "1rem" }}
+          {cards.length === 0 ? (
+            <Text>No cards found.</Text>
+          ) : (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: "1rem",
+              }}
             >
-              Request New Card
-            </Button>
-          </Column>
+              {cards.map((card) => (
+                <Card
+                  key={card.id}
+                  radius="lg"
+                  padding="m"
+                  shadow="l"
+                  style={{
+                    aspectRatio: "1.586", // credit card ratio
+                    background:
+                      "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Flex justify="space-between" align="center">
+                    <Badge
+                      variant={
+                        card.type === "Premium" ? "success" : "primary"
+                      }
+                    >
+                      {card.type}
+                    </Badge>
+                    <Badge
+                      variant={
+                        card.status === "active" ? "success" : "warning"
+                      }
+                    >
+                      {card.status}
+                    </Badge>
+                  </Flex>
+
+                  <div style={{ marginTop: "auto" }}>
+                    <Heading
+                      variant="title-strong-s"
+                      style={{ fontSize: "1.25rem" }}
+                    >
+                      {card.maskedNumber}
+                    </Heading>
+                    <Text variant="label-default-s">CVV: {card.cvv}</Text>
+                    <Text variant="label-default-s">
+                      Created:{" "}
+                      {new Date(card.created_at).toLocaleDateString()}
+                    </Text>
+                  </div>
+
+                  <Flex
+                    justify="space-between"
+                    style={{ marginTop: "0.5rem" }}
+                  >
+                    <Column>
+                      <Text variant="label-default-s">Balance</Text>
+                      <Text>${card.balance.toFixed(2)}</Text>
+                    </Column>
+                  </Flex>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          <Button
+            onClick={handleRequestCard}
+            icon={<Plus />}
+            fillWidth
+            style={{ marginTop: "1rem" }}
+          >
+            Request New Card
+          </Button>
         </Card>
 
         {/* Top-Up Section */}
@@ -196,9 +251,12 @@ export default function UserDashboard() {
 
           <form onSubmit={handleTopupSubmit}>
             <Column gap="m" style={{ marginTop: "1rem" }}>
-              {/* Native styled select */}
+              {/* Select Card */}
               <div>
-                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                <Text
+                  variant="label-default-s"
+                  style={{ marginBottom: "0.5rem" }}
+                >
                   Select Card
                 </Text>
                 <select
@@ -223,8 +281,12 @@ export default function UserDashboard() {
                 </select>
               </div>
 
+              {/* Amount */}
               <div>
-                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                <Text
+                  variant="label-default-s"
+                  style={{ marginBottom: "0.5rem" }}
+                >
                   Amount (USD)
                 </Text>
                 <Input
@@ -237,8 +299,12 @@ export default function UserDashboard() {
                 />
               </div>
 
+              {/* Wallet Address */}
               <div>
-                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                <Text
+                  variant="label-default-s"
+                  style={{ marginBottom: "0.5rem" }}
+                >
                   USDT TRC20 Wallet Address
                 </Text>
                 <Flex gap="s" vertical="center">
@@ -263,8 +329,12 @@ export default function UserDashboard() {
                 </Flex>
               </div>
 
+              {/* TXID */}
               <div>
-                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                <Text
+                  variant="label-default-s"
+                  style={{ marginBottom: "0.5rem" }}
+                >
                   Transaction ID (TXID)
                 </Text>
                 <Input
@@ -276,11 +346,7 @@ export default function UserDashboard() {
                 />
               </div>
 
-              <Button
-                type="submit"
-                fillWidth
-                style={{ marginTop: "0.5rem" }}
-              >
+              <Button type="submit" fillWidth style={{ marginTop: "0.5rem" }}>
                 Submit Top-Up Request
               </Button>
             </Column>
