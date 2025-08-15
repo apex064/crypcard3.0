@@ -157,6 +157,7 @@ export default function UserDashboard() {
                   radius="2xl"
                   padding="m"
                   shadow="l"
+                  className="hover-card"
                   style={{
                     borderRadius: "var(--radius-2xl, 24px)",
                     overflow: "hidden",
@@ -168,6 +169,7 @@ export default function UserDashboard() {
                     justifyContent: "space-between",
                     position: "relative",
                     width: "100%",
+                    transition: "background 0.3s ease",
                   }}
                 >
                   <Flex justify="space-between">
@@ -215,10 +217,12 @@ export default function UserDashboard() {
           radius="xl"
           shadow="xl"
           padding="l"
+          className="hover-card"
           style={{
             flex: "1 1 350px",
             background:
               "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+            transition: "background 0.3s ease",
           }}
         >
           <Flex align="center" gap="s">
@@ -318,6 +322,17 @@ export default function UserDashboard() {
           </form>
         </Card>
       </Flex>
+
+      {/* Hover Styles */}
+      <style jsx>{`
+        .hover-card:hover {
+          background: linear-gradient(
+            135deg,
+            var(--color-background-subtle) 0%,
+            var(--color-background-default) 100%
+          ) !important;
+        }
+      `}</style>
     </Column>
   );
 }
