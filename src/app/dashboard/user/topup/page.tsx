@@ -142,24 +142,36 @@ export default function TopUpPage() {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
     gap: "1rem",
+    width: "100%",
   };
 
   return (
     <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
       <Header />
 
-      <Heading variant="title-strong-l">Top Up</Heading>
+      {/* Top-Up Title Pill */}
+      <Flex align="center" style={{ marginBottom: "0.5rem" }}>
+        <Badge
+          variant="contrast"
+          size="m"
+          style={{ borderRadius: "50px", padding: "0.5rem 1.5rem" }}
+        >
+          Top Up
+        </Badge>
+      </Flex>
       <Text>Add funds to your virtual cards using USDT TRC20</Text>
 
-      <Flex
-        gap="l"
-        wrap="wrap"
-        style={{ marginTop: "1rem", justifyContent: "space-between" }}
-      >
+      {/* Cards & Form */}
+      <Flex gap="l" wrap="wrap" style={{ marginTop: "1rem", justifyContent: "space-between" }}>
         {/* Cards Section */}
         <Column style={{ flex: "1 1 400px", minWidth: "300px" }} gap="m">
           <Flex align="center" gap="s" style={{ marginBottom: "0.5rem" }}>
-            <Badge variant="contrast">Select Card</Badge>
+            <Badge
+              variant="contrast"
+              style={{ borderRadius: "50px", padding: "0.25rem 1rem" }}
+            >
+              Select Card
+            </Badge>
           </Flex>
           <div style={gridStyle}>
             {cards.map((card) => (
@@ -180,6 +192,7 @@ export default function TopUpPage() {
                     cardId === card.id
                       ? "2px solid var(--color-primary-default)"
                       : "none",
+                  width: "100%",
                 }}
                 onClick={() => setCardId(card.id)}
               >
@@ -273,34 +286,47 @@ export default function TopUpPage() {
         </Column>
       </Flex>
 
-      {/* Top-Up History */}
-      <Column gap="m" style={{ marginTop: "2rem" }}>
-        <Heading variant="title-strong-m">Top-Up History</Heading>
-        <div style={gridStyle}>
-          {history.length === 0 && <Text>No top-ups yet.</Text>}
-          {history.map((h) => (
-            <Card key={h.id} radius="xl" padding="m" shadow="l" style={{ width: "100%" }}>
-              <Flex justify="space-between" align="start"> {/* <-- fixed badge alignment */}
-                <Column>
-                  <Text>
-                    ${isNaN(Number(h.amount)) ? "0.00" : Number(h.amount).toFixed(2)} USDT
-                  </Text>
-                  <Text variant="label-default-s">
-                    {new Date(h.created_at).toLocaleString()}
-                  </Text>
-                  <Text
-                    variant="label-default-s"
-                    style={{ fontFamily: "monospace" }}
-                  >
-                    {h.txid.substring(0, 20)}...
-                  </Text>
-                </Column>
+      {/* Top-Up History Pill */}
+      <Flex align="center" style={{ marginTop: "2rem", marginBottom: "0.5rem" }}>
+        <Badge
+          variant="contrast"
+          size="m"
+          style={{ borderRadius: "50px", padding: "0.5rem 1.5rem" }}
+        >
+          Top-Up History
+        </Badge>
+      </Flex>
+
+      <div style={{ ...gridStyle, gridTemplateColumns: "1fr" }}>
+        {history.length === 0 && <Text>No top-ups yet.</Text>}
+        {history.map((h) => (
+          <Card key={h.id} radius="xl" padding="m" shadow="l" style={{ width: "100%" }}>
+            <Flex justify="space-between" align="flex-start">
+              <Column>
+                <Text>
+                  $
+                  {isNaN(Number(h.amount))
+                    ? "0.00"
+                    : Number(h.amount).toFixed(2)}{" "}
+                  USDT
+                </Text>
+                <Text variant="label-default-s">
+                  {new Date(h.created_at).toLocaleString()}
+                </Text>
+                <Text
+                  variant="label-default-s"
+                  style={{ fontFamily: "monospace" }}
+                >
+                  {h.txid.substring(0, 20)}...
+                </Text>
+              </Column>
+              <div style={{ marginLeft: "auto", alignSelf: "center" }}>
                 {getStatusBadge(h.status)}
-              </Flex>
-            </Card>
-          ))}
-        </div>
-      </Column>
+              </div>
+            </Flex>
+          </Card>
+        ))}
+      </div>
     </Column>
   );
 }
