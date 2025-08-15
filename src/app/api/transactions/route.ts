@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    // Combine normal transactions and top-ups into a single result
+    // Combine transactions and all top-ups (pending, completed, failed) into one list
     const result = await query(
       `
       SELECT id, type, description, amount, status, date, time, card_number
