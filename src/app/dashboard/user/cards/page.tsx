@@ -80,15 +80,21 @@ export default function MyCardsPage() {
           </Button>
         </Flex>
 
-        <Flex gap="l" wrap="wrap" style={{ marginTop: "1rem" }}>
+        {/* Cards Grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: "1rem",
+            marginTop: "1rem",
+          }}
+        >
           {cards.map((card) => (
             <Card
               key={card.id}
               radius="2xl"
               shadow="l"
               style={{
-                flex: "1 1 350px",
-                aspectRatio: "1.586",
                 overflow: "hidden",
                 background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
                 display: "flex",
@@ -98,7 +104,6 @@ export default function MyCardsPage() {
                 cursor: "pointer",
               }}
             >
-              {/* Top badges */}
               <Flex justify="space-between">
                 <Badge variant={card.type === "Premium" ? "success" : "primary"}>
                   {card.type || "Standard"}
@@ -106,7 +111,6 @@ export default function MyCardsPage() {
                 {getStatusBadge(card.status)}
               </Flex>
 
-              {/* Card info */}
               <Column gap="s" style={{ marginTop: "auto" }}>
                 <Heading variant="title-strong-s" style={{ fontSize: "1.25rem" }}>
                   {showCardDetails === card.id ? card.number : card.maskedNumber}
@@ -115,7 +119,6 @@ export default function MyCardsPage() {
                 {card.expiry && <Text variant="label-default-s">Expires: {card.expiry}</Text>}
               </Column>
 
-              {/* Show/Hide Details */}
               {showCardDetails === card.id && (
                 <Card radius="xl" padding="m" style={{ marginTop: "1rem", background: "var(--color-background-subtle)" }}>
                   <Column gap="s">
@@ -159,7 +162,7 @@ export default function MyCardsPage() {
               </Button>
             </Card>
           ))}
-        </Flex>
+        </div>
       </Column>
     </Column>
   );
