@@ -42,6 +42,7 @@ export default function TopUpPage() {
   const [walletCopied, setWalletCopied] = useState(false);
   const [history, setHistory] = useState<TopupHistoryType[]>([]);
   const [loading, setLoading] = useState(false);
+
   const walletAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";
 
   useEffect(() => {
@@ -58,7 +59,9 @@ export default function TopUpPage() {
 
   const fetchCards = async () => {
     try {
-      const res = await fetch("/api/cards", { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch("/api/cards", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
       setCards(data.cards ?? []);
     } catch (err) {
@@ -68,7 +71,9 @@ export default function TopUpPage() {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch("/api/topup/history", { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch("/api/topup/history", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
       setHistory(data.data ?? []);
     } catch (err) {
@@ -76,10 +81,14 @@ export default function TopUpPage() {
     }
   };
 
-  const copyWalletAddress = () => {
-    navigator.clipboard.writeText(walletAddress);
-    setWalletCopied(true);
-    setTimeout(() => setWalletCopied(false), 2000);
+  const copyWalletAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(walletAddress);
+      setWalletCopied(true);
+      setTimeout(() => setWalletCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy wallet address", err);
+    }
   };
 
   const handleTopupSubmit = async (e: React.FormEvent) => {
@@ -91,8 +100,15 @@ export default function TopUpPage() {
     try {
       const res = await fetch("/api/topup", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ cardId, amount: parseFloat(topupAmount), txid }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          cardId,
+          amount: parseFloat(topupAmount),
+          txid,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Top-up failed");
@@ -110,10 +126,14 @@ export default function TopUpPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
-      case "completed": return <Badge variant="success">Completed</Badge>;
-      case "pending": return <Badge variant="warning">Pending</Badge>;
-      case "failed": return <Badge variant="danger">Failed</Badge>;
-      default: return <Badge variant="secondary">{status}</Badge>;
+      case "completed":
+        return <Badge variant="success">Completed</Badge>;
+      case "pending":
+        return <Badge variant="warning">Pending</Badge>;
+      case "failed":
+        return <Badge variant="danger">Failed</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
     }
   };
 
@@ -148,14 +168,23 @@ export default function TopUpPage() {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
-                  background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+                  background:
+                    "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
                   cursor: "pointer",
+                  border:
+                    cardId === card.id
+                      ? "2px solid var(--color-primary-default)"
+                      : "none",
                 }}
                 onClick={() => setCardId(card.id)}
               >
                 <Flex justify="space-between">
-                  <Badge variant={card.type === "Premium" ? "success" : "primary"}>{card.type}</Badge>
-                  <Badge variant={card.status === "active" ? "success" : "warning"}>{card.status}</Badge>
+                  <Badge variant={card.type === "Premium" ? "success" : "primary"}>
+                    {card.type}
+                  </Badge>
+                  <Badge variant={card.status === "active" ? "success" : "warning"}>
+                    {card.status}
+                  </Badge>
                 </Flex>
                 <Heading variant="title-strong-s">{card.maskedNumber}</Heading>
                 <Text>Balance: ${card.balance.toFixed(2)}</Text>
@@ -195,7 +224,12 @@ export default function TopUpPage() {
                 </select>
 
                 <Text>Amount (USD)</Text>
-                <Input type="number" value={topupAmount} onChange={(e) => setTopupAmount(e.target.value)} min={10} />
+                <Input
+                  type="number"
+                  value={topupAmount}
+                  onChange={(e) => setTopupAmount(e.target.value)}
+                  min={10}
+                />
 
                 <Text>Wallet Address</Text>
                 <Flex gap="s" align="center">
@@ -243,8 +277,13 @@ export default function TopUpPage() {
               <Flex justify="space-between" align="center">
                 <Column>
                   <Text>${h.amount.toFixed(2)} USDT</Text>
-                  <Text variant="label-default-s">{new Date(h.created_at).toLocaleString()}</Text>
-                  <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>
+                  <Text variant="label-default-s">
+                    {new Date(h.created_at).toLocaleString()}
+                  </Text>
+                  <Text
+                    variant="label-default-s"
+                    style={{ fontFamily: "monospace" }}
+                  >
                     {h.txid.substring(0, 20)}...
                   </Text>
                 </Column>
