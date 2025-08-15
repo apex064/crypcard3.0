@@ -19,7 +19,7 @@ type CardType = {
   number: string;
   maskedNumber: string;
   cvv: string;
-  balance: number;
+  balance: number | string; // allow string from API
   status: string;
   type: string;
   created_at: string;
@@ -27,7 +27,7 @@ type CardType = {
 
 type TopupHistoryType = {
   id: string;
-  amount: number;
+  amount: number | string; // allow string from API
   txid: string;
   status: string;
   created_at: string;
@@ -93,7 +93,8 @@ export default function TopUpPage() {
 
   const handleTopupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!cardId || !topupAmount || !txid) return alert("Please fill all fields");
+    if (!cardId || !topupAmount || !txid)
+      return alert("Please fill all fields");
     if (!token) return;
 
     setLoading(true);
@@ -187,7 +188,9 @@ export default function TopUpPage() {
                   </Badge>
                 </Flex>
                 <Heading variant="title-strong-s">{card.maskedNumber}</Heading>
-                <Text>Balance: ${card.balance.toFixed(2)}</Text>
+                <Text>
+                  Balance: ${isNaN(Number(card.balance)) ? "0.00" : Number(card.balance).toFixed(2)}
+                </Text>
               </Card>
             ))}
           </div>
@@ -218,7 +221,11 @@ export default function TopUpPage() {
                   <option value="">-- Select a card --</option>
                   {cards.map((card) => (
                     <option key={card.id} value={card.id}>
-                      {card.maskedNumber} (${card.balance.toFixed(2)})
+                      {card.maskedNumber} ($
+                      {isNaN(Number(card.balance))
+                        ? "0.00"
+                        : Number(card.balance).toFixed(2)}
+                      )
                     </option>
                   ))}
                 </select>
@@ -276,7 +283,13 @@ export default function TopUpPage() {
             <Card key={h.id} radius="xl" padding="m" shadow="l">
               <Flex justify="space-between" align="center">
                 <Column>
-                  <Text>${h.amount.toFixed(2)} USDT</Text>
+                  <Text>
+                    $
+                    {isNaN(Number(h.amount))
+                      ? "0.00"
+                      : Number(h.amount).toFixed(2)}{" "}
+                    USDT
+                  </Text>
                   <Text variant="label-default-s">
                     {new Date(h.created_at).toLocaleString()}
                   </Text>
