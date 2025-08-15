@@ -141,50 +141,60 @@ export default function TopUpPage() {
     <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
       <Header />
 
-      {/* Cards Section */}
-      <Flex gap="l" wrap="wrap" fillWidth>
-        <Column style={{ flex: "1 1 100%", gap: "m" }}>
-          <Heading variant="title-strong-l">My Cards</Heading>
-          {cards.length === 0 ? (
-            <Text>No cards found.</Text>
-          ) : (
-            <Column gap="m">
-              {cards.map((card) => (
-                <Card
-                  key={card.id}
-                  radius="3xl"
-                  padding="m"
-                  shadow="l"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    cursor: "pointer",
-                    background:
-                      "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
-                  }}
-                  onClick={() => setCardId(card.id)}
-                >
-                  <Flex justify="space-between">
-                    <Badge variant={card.type === "Premium" ? "success" : "primary"}>
-                      {card.type}
-                    </Badge>
-                    <Badge variant={card.status === "active" ? "success" : "warning"}>
-                      {card.status}
-                    </Badge>
-                  </Flex>
-                  <Heading variant="title-strong-s">{card.maskedNumber}</Heading>
-                  <Text>Balance: ${isNaN(Number(card.balance)) ? "0.00" : Number(card.balance).toFixed(2)}</Text>
-                </Card>
-              ))}
-            </Column>
-          )}
+      <Heading variant="title-strong-l">Top Up</Heading>
+      <Text>Add funds to your virtual cards using USDT TRC20</Text>
+
+      <Flex gap="l" wrap="wrap" style={{ marginTop: "1rem" }}>
+        {/* Cards Section */}
+        <Column style={{ flex: "1 1 350px" }} gap="m">
+          <Text>Select Card</Text>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "1rem",
+            }}
+          >
+            {cards.map((card) => (
+              <Card
+                key={card.id}
+                radius="3xl"
+                padding="m"
+                shadow="l"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  cursor: "pointer",
+                  background:
+                    "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+                  border:
+                    cardId === card.id
+                      ? "2px solid var(--color-primary-default)"
+                      : "none",
+                }}
+                onClick={() => setCardId(card.id)}
+              >
+                <Flex justify="space-between">
+                  <Badge variant={card.type === "Premium" ? "success" : "primary"}>
+                    {card.type}
+                  </Badge>
+                  <Badge variant={card.status === "active" ? "success" : "warning"}>
+                    {card.status}
+                  </Badge>
+                </Flex>
+                <Heading variant="title-strong-s">{card.maskedNumber}</Heading>
+                <Text>
+                  Balance: ${isNaN(Number(card.balance)) ? "0.00" : Number(card.balance).toFixed(2)}
+                </Text>
+              </Card>
+            ))}
+          </div>
         </Column>
 
         {/* Top-Up Form */}
-        <Column style={{ flex: "1 1 100%", gap: "m" }}>
-          <Heading variant="title-strong-l">Top Up</Heading>
+        <Column style={{ flex: "1 1 350px" }} gap="m">
           <Card radius="3xl" padding="l" shadow="xl">
             <form onSubmit={handleTopupSubmit}>
               <Column gap="m">
@@ -203,7 +213,8 @@ export default function TopUpPage() {
                   <option value="">-- Select a card --</option>
                   {cards.map((card) => (
                     <option key={card.id} value={card.id}>
-                      {card.maskedNumber} (${isNaN(Number(card.balance)) ? "0.00" : Number(card.balance).toFixed(2)})
+                      {card.maskedNumber} ($
+                      {isNaN(Number(card.balance)) ? "0.00" : Number(card.balance).toFixed(2)})
                     </option>
                   ))}
                 </select>
@@ -211,11 +222,9 @@ export default function TopUpPage() {
                 <Text>Amount (USD)</Text>
                 <Input
                   type="number"
-                  placeholder="Enter amount"
                   value={topupAmount}
                   onChange={(e) => setTopupAmount(e.target.value)}
                   min={10}
-                  required
                 />
 
                 <Text>Wallet Address</Text>
@@ -237,13 +246,7 @@ export default function TopUpPage() {
                 </Flex>
 
                 <Text>Transaction ID (TXID)</Text>
-                <Input
-                  type="text"
-                  placeholder="Enter transaction ID"
-                  value={txid}
-                  onChange={(e) => setTxid(e.target.value)}
-                  required
-                />
+                <Input value={txid} onChange={(e) => setTxid(e.target.value)} />
 
                 <Button type="submit" fillWidth disabled={loading}>
                   {loading ? "Submitting..." : "Submit Top-Up"}
@@ -255,34 +258,41 @@ export default function TopUpPage() {
       </Flex>
 
       {/* Top-Up History */}
-      <Column gap="m" style={{ marginTop: "2rem", width: "100%" }}>
-        <Heading variant="title-strong-l">Top-Up History</Heading>
-        <Column gap="m">
-          {history.length === 0 ? (
-            <Text>No top-ups yet.</Text>
-          ) : (
-            history.map((h) => (
-              <Card
-                key={h.id}
-                radius="3xl"
-                padding="m"
-                shadow="l"
-                style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-              >
-                <Column>
-                  <Text style={{ fontWeight: 600 }}>
-                    ${isNaN(Number(h.amount)) ? "0.00" : Number(h.amount).toFixed(2)} USDT
-                  </Text>
-                  <Text variant="label-default-s">{new Date(h.created_at).toLocaleString()}</Text>
-                  <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>
-                    TXID: {h.txid.substring(0, 20)}...
-                  </Text>
-                </Column>
-                <div>{getStatusBadge(h.status)}</div>
-              </Card>
-            ))
-          )}
-        </Column>
+      <Column gap="m" style={{ marginTop: "2rem" }}>
+        <Heading variant="title-strong-m">Top-Up History</Heading>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "1rem",
+          }}
+        >
+          {history.length === 0 && <Text>No top-ups yet.</Text>}
+          {history.map((h) => (
+            <Card
+              key={h.id}
+              radius="3xl"
+              padding="m"
+              shadow="l"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Column>
+                <Text style={{ fontWeight: 600 }}>
+                  ${isNaN(Number(h.amount)) ? "0.00" : Number(h.amount).toFixed(2)} USDT
+                </Text>
+                <Text variant="label-default-s">{new Date(h.created_at).toLocaleString()}</Text>
+                <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>
+                  TXID: {h.txid.substring(0, 20)}...
+                </Text>
+              </Column>
+              <div>{getStatusBadge(h.status)}</div>
+            </Card>
+          ))}
+        </div>
       </Column>
     </Column>
   );
