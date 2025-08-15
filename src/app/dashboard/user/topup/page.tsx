@@ -11,7 +11,7 @@ import {
   Input,
   Badge,
 } from "@once-ui-system/core";
-import { Copy, CheckCircle, Plus } from "lucide-react";
+import { ArrowUpCircle, Copy, CheckCircle } from "lucide-react";
 import Header from "@/components/Header";
 
 type CardType = {
@@ -53,41 +53,49 @@ export default function TopUpPage() {
 
   useEffect(() => {
     if (!token) return;
-
-    const fetchCards = async () => {
-      try {
-        const res = await fetch("/api/cards", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setCards(data.cards ?? []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    const fetchHistory = async () => {
-      try {
-        const res = await fetch("/api/topup/history", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setHistory(data.data ?? []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
     fetchCards();
     fetchHistory();
   }, [token]);
 
+  const fetchCards = async () => {
+    try {
+      const res = await fetch("/api/cards", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setCards(data.cards ?? []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchHistory = async () => {
+    try {
+      const res = await fetch("/api/topup/history", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setHistory(data.data ?? []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const copyWalletAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(walletAddress);
+      setWalletCopied(true);
+      setTimeout(() => setWalletCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy wallet address", err);
+    }
+  };
+
   const handleTopupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!token) return alert("User not authenticated");
-    if (!cardId) return alert("Select a card.");
-    if (!topupAmount || parseFloat(topupAmount) < 10) return alert("Minimum top-up is $10.");
-    if (!txid.trim()) return alert("TXID required.");
+    if (!cardId || !topupAmount || !txid)
+      return alert("Please fill all fields");
+    if (!token) return;
 
     setLoading(true);
     try {
@@ -97,84 +105,81 @@ export default function TopUpPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ cardId, amount: parseFloat(topupAmount), txid }),
+        body: JSON.stringify({
+          cardId,
+          amount: parseFloat(topupAmount),
+          txid,
+        }),
       });
       const data = await res.json();
-      if (res.ok) {
-        alert("Top-up submitted!");
-        setTopupAmount("");
-        setTxid("");
-        setCardId("");
-        const updated = await fetch("/api/topup/history", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const updatedData = await updated.json();
-        setHistory(updatedData.data ?? []);
-      } else alert("Error: " + (data.error ?? "Unknown"));
-    } catch (err) {
-      alert("Failed to submit top-up: " + err);
+      if (!res.ok) throw new Error(data.error || "Top-up failed");
+      alert(data.message || "Top-up submitted!");
+      setTopupAmount("");
+      setTxid("");
+      setCardId("");
+      fetchHistory();
+    } catch (err: any) {
+      alert(err.message || "Unexpected error");
     } finally {
       setLoading(false);
     }
   };
 
-  const copyWalletAddress = () => {
-    navigator.clipboard.writeText(walletAddress);
-    setWalletCopied(true);
-    setTimeout(() => setWalletCopied(false), 2000);
-  };
-
   const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case "completed":
-        return <Badge variant="success">{status}</Badge>;
+        return <Badge variant="success">Completed</Badge>;
       case "pending":
-        return <Badge variant="warning">{status}</Badge>;
+        return <Badge variant="warning">Pending</Badge>;
       case "failed":
-        return <Badge variant="danger">{status}</Badge>;
+        return <Badge variant="danger">Failed</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
+  };
+
+  const gridStyle = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gap: "1rem",
   };
 
   return (
     <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
       <Header />
 
-      {/* Top-Up Title */}
-      <Flex align="center" gap="s">
-        <Badge variant="contrast" size="m" style={{ borderRadius: "50px" }}>
-          Top Up
-        </Badge>
-      </Flex>
+      <Heading variant="title-strong-l">Top Up</Heading>
       <Text>Add funds to your virtual cards using USDT TRC20</Text>
 
-      {/* Cards & Form */}
-      <Flex gap="l" wrap="wrap" style={{ marginTop: "1rem" }}>
-        {/* Cards */}
-        <Column style={{ flex: "1 1 350px" }} gap="m">
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "1rem",
-            }}
-          >
+      <Flex
+        gap="l"
+        wrap="wrap"
+        style={{ marginTop: "1rem", justifyContent: "space-between" }}
+      >
+        {/* Cards Section */}
+        <Column style={{ flex: "1 1 400px", minWidth: "300px" }} gap="m">
+          <Flex align="center" gap="s" style={{ marginBottom: "0.5rem" }}>
+            <Badge variant="contrast">Select Card</Badge>
+          </Flex>
+          <div style={gridStyle}>
             {cards.map((card) => (
               <Card
                 key={card.id}
-                radius="3xl"
+                radius="2xl"
                 padding="m"
                 shadow="l"
                 style={{
+                  aspectRatio: "1.586",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
-                  cursor: "pointer",
                   background:
                     "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+                  cursor: "pointer",
                   border:
-                    cardId === card.id ? "2px solid var(--color-primary-default)" : "none",
+                    cardId === card.id
+                      ? "2px solid var(--color-primary-default)"
+                      : "none",
                 }}
                 onClick={() => setCardId(card.id)}
               >
@@ -188,7 +193,8 @@ export default function TopUpPage() {
                 </Flex>
                 <Heading variant="title-strong-s">{card.maskedNumber}</Heading>
                 <Text>
-                  Balance: ${isNaN(Number(card.balance)) ? "0.00" : Number(card.balance).toFixed(2)}
+                  Balance: $
+                  {isNaN(Number(card.balance)) ? "0.00" : Number(card.balance).toFixed(2)}
                 </Text>
               </Card>
             ))}
@@ -196,10 +202,15 @@ export default function TopUpPage() {
         </Column>
 
         {/* Top-Up Form */}
-        <Column style={{ flex: "1 1 350px" }} gap="m">
-          <Card radius="3xl" padding="l" shadow="xl">
+        <Column style={{ flex: "1 1 400px", minWidth: "300px" }} gap="m">
+          <Card radius="xl" padding="l" shadow="xl">
+            <Flex align="center" gap="s">
+              <ArrowUpCircle size={24} />
+              <Heading variant="title-strong-m">Add Funds</Heading>
+            </Flex>
+
             <form onSubmit={handleTopupSubmit}>
-              <Column gap="m">
+              <Column gap="m" style={{ marginTop: "1rem" }}>
                 <Text>Select Card</Text>
                 <select
                   value={cardId}
@@ -216,7 +227,10 @@ export default function TopUpPage() {
                   {cards.map((card) => (
                     <option key={card.id} value={card.id}>
                       {card.maskedNumber} ($
-                      {isNaN(Number(card.balance)) ? "0.00" : Number(card.balance).toFixed(2)})
+                      {isNaN(Number(card.balance))
+                        ? "0.00"
+                        : Number(card.balance).toFixed(2)}
+                      )
                     </option>
                   ))}
                 </select>
@@ -260,45 +274,37 @@ export default function TopUpPage() {
       </Flex>
 
       {/* Top-Up History */}
-      <Flex align="center" gap="s" style={{ marginTop: "2rem" }}>
-        <Badge variant="contrast" size="m" style={{ borderRadius: "50px" }}>
-          Top-Up History
-        </Badge>
-      </Flex>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "1rem",
-          marginTop: "1rem",
-        }}
-      >
-        {history.length === 0 && <Text>No top-ups yet.</Text>}
-        {history.map((h) => (
-          <Card
-            key={h.id}
-            radius="3xl"
-            padding="m"
-            shadow="l"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Column>
-              <Text style={{ fontWeight: 600 }}>
-                ${isNaN(Number(h.amount)) ? "0.00" : Number(h.amount).toFixed(2)} USDT
-              </Text>
-              <Text variant="label-default-s">{new Date(h.created_at).toLocaleString()}</Text>
-              <Text variant="label-default-s" style={{ fontFamily: "monospace" }}>
-                TXID: {h.txid.substring(0, 20)}...
-              </Text>
-            </Column>
-            <div>{getStatusBadge(h.status)}</div>
-          </Card>
-        ))}
-      </div>
+      <Column gap="m" style={{ marginTop: "2rem" }}>
+        <Heading variant="title-strong-m">Top-Up History</Heading>
+        <div style={gridStyle}>
+          {history.length === 0 && <Text>No top-ups yet.</Text>}
+          {history.map((h) => (
+            <Card key={h.id} radius="xl" padding="m" shadow="l">
+              <Flex justify="space-between" align="center">
+                <Column>
+                  <Text>
+                    $
+                    {isNaN(Number(h.amount))
+                      ? "0.00"
+                      : Number(h.amount).toFixed(2)}{" "}
+                    USDT
+                  </Text>
+                  <Text variant="label-default-s">
+                    {new Date(h.created_at).toLocaleString()}
+                  </Text>
+                  <Text
+                    variant="label-default-s"
+                    style={{ fontFamily: "monospace" }}
+                  >
+                    {h.txid.substring(0, 20)}...
+                  </Text>
+                </Column>
+                {getStatusBadge(h.status)}
+              </Flex>
+            </Card>
+          ))}
+        </div>
+      </Column>
     </Column>
   );
 }
