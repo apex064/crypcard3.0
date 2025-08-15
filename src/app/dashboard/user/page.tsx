@@ -77,7 +77,7 @@ export default function UserDashboard() {
       if (res.ok) {
         alert("Card request submitted!");
         const updatedRes = await fetch("/api/cards", { headers: { Authorization: `Bearer ${token}` } });
-        const updatedData = await updatedRes.json();
+        const updatedData = await res.json();
         if (updatedRes.ok) setCards(updatedData.cards);
       } else alert("Error: " + (data.error ?? "Unknown"));
     } catch (err) {
@@ -129,7 +129,7 @@ export default function UserDashboard() {
       {/* Header */}
       <Header onLogout={handleLogout} />
 
-      {/* Section Header */}
+      {/* My Cards Section Header */}
       <Flex align="center" gap="s" style={{ marginBottom: "0.5rem" }}>
         <Badge variant="contrast" size="m">
           My Cards
@@ -211,115 +211,116 @@ export default function UserDashboard() {
         </Column>
 
         {/* Top-Up Section */}
-        <Card
-          radius="xl"
-          shadow="xl"
-          padding="l"
-          style={{
-            flex: "1 1 350px",
-            background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
-            transition: "all 0.3s ease",
-            cursor: "pointer",
-          }}
-        >
-          {/* Top Up Heading as Pill Badge */}
-          <Flex align="center" gap="s" style={{ marginBottom: "1rem" }}>
+        <Column style={{ flex: "1 1 350px" }} gap="m">
+          {/* Top Up Section Header */}
+          <Flex align="center" gap="s" style={{ marginBottom: "0.5rem" }}>
             <Badge variant="contrast" size="m">
               Top Up
             </Badge>
           </Flex>
 
-          <form onSubmit={handleTopupSubmit}>
-            <Column gap="m">
-              {/* Select Card */}
-              <div>
-                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
-                  Select Card
-                </Text>
-                <select
-                  value={cardId}
-                  onChange={(e) => setCardId(e.target.value)}
-                  required
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem",
-                    borderRadius: "0.5rem",
-                    backgroundColor: "var(--color-background-default)",
-                    border: "1px solid var(--color-border-default)",
-                    color: "var(--color-text-default)",
-                  }}
-                >
-                  <option value="">-- Select a card --</option>
-                  {cards.map((card) => (
-                    <option key={card.id} value={card.id}>
-                      {card.maskedNumber} (${card.balance.toFixed(2)})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Amount */}
-              <div>
-                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
-                  Amount (USD)
-                </Text>
-                <Input
-                  type="number"
-                  placeholder="Enter amount"
-                  value={topupAmount}
-                  onChange={(e) => setTopupAmount(e.target.value)}
-                  required
-                  min={10}
-                />
-              </div>
-
-              {/* Wallet Address */}
-              <div>
-                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
-                  USDT TRC20 Wallet Address
-                </Text>
-                <Flex gap="s" vertical="center">
-                  <Text
+          <Card
+            radius="xl"
+            shadow="xl"
+            padding="l"
+            style={{
+              background: "linear-gradient(135deg, var(--color-background-default) 0%, var(--color-background-subtle) 100%)",
+              transition: "all 0.3s ease",
+              cursor: "pointer",
+            }}
+          >
+            <form onSubmit={handleTopupSubmit}>
+              <Column gap="m">
+                {/* Select Card */}
+                <div>
+                  <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                    Select Card
+                  </Text>
+                  <select
+                    value={cardId}
+                    onChange={(e) => setCardId(e.target.value)}
+                    required
                     style={{
-                      flex: 1,
-                      wordBreak: "break-all",
+                      width: "100%",
                       padding: "0.75rem",
                       borderRadius: "0.5rem",
-                      background: "var(--color-background-subtle)",
+                      backgroundColor: "var(--color-background-default)",
+                      border: "1px solid var(--color-border-default)",
+                      color: "var(--color-text-default)",
                     }}
                   >
-                    {walletAddress}
+                    <option value="">-- Select a card --</option>
+                    {cards.map((card) => (
+                      <option key={card.id} value={card.id}>
+                        {card.maskedNumber} (${card.balance.toFixed(2)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Amount */}
+                <div>
+                  <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                    Amount (USD)
                   </Text>
-                  <Button
-                    onClick={copyWalletAddress}
-                    icon={walletCopied ? <CheckCircle /> : <Copy />}
-                    variant="outline"
-                  >
-                    {walletCopied ? "Copied!" : "Copy"}
-                  </Button>
-                </Flex>
-              </div>
+                  <Input
+                    type="number"
+                    placeholder="Enter amount"
+                    value={topupAmount}
+                    onChange={(e) => setTopupAmount(e.target.value)}
+                    required
+                    min={10}
+                  />
+                </div>
 
-              {/* TXID */}
-              <div>
-                <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
-                  Transaction ID (TXID)
-                </Text>
-                <Input
-                  type="text"
-                  placeholder="Enter transaction ID"
-                  value={txid}
-                  onChange={(e) => setTxid(e.target.value)}
-                  required
-                />
-              </div>
+                {/* Wallet Address */}
+                <div>
+                  <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                    USDT TRC20 Wallet Address
+                  </Text>
+                  <Flex gap="s" vertical="center">
+                    <Text
+                      style={{
+                        flex: 1,
+                        wordBreak: "break-all",
+                        padding: "0.75rem",
+                        borderRadius: "0.5rem",
+                        background: "var(--color-background-subtle)",
+                      }}
+                    >
+                      {walletAddress}
+                    </Text>
+                    <Button
+                      onClick={copyWalletAddress}
+                      icon={walletCopied ? <CheckCircle /> : <Copy />}
+                      variant="outline"
+                    >
+                      {walletCopied ? "Copied!" : "Copy"}
+                    </Button>
+                  </Flex>
+                </div>
 
-              <Button type="submit" fillWidth style={{ marginTop: "0.5rem" }}>
-                Submit Top-Up Request
-              </Button>
-            </Column>
-          </form>
-        </Card>
+                {/* TXID */}
+                <div>
+                  <Text variant="label-default-s" style={{ marginBottom: "0.5rem" }}>
+                    Transaction ID (TXID)
+                  </Text>
+                  <Input
+                    type="text"
+                    placeholder="Enter transaction ID"
+                    value={txid}
+                    onChange={(e) => setTxid(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <Button type="submit" fillWidth style={{ marginTop: "0.5rem" }}>
+                  Submit Top-Up Request
+                </Button>
+              </Column>
+            </form>
+          </Card>
+        </Column>
       </Flex>
     </Column>
   );
