@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Row, Icon, Button, Heading } from "@once-ui-system/core";
+import { Menu, X } from "lucide-react";
 
 type HeaderProps = {
   onLogout: () => void;
@@ -10,7 +11,7 @@ type HeaderProps = {
 
 const navItems = [
   { title: "Dashboard", href: "/dashboard/user", iconName: "pages" },
-  { title: "Cards", href: "/dashboard/user/cards", iconName: "rocket" },
+  { title: "Cards", href: "/dashboard/user/cards", iconName: "pages" },
   { title: "Top-Up", href: "/dashboard/user/topup", iconName: "rocket" },
   { title: "Transactions", href: "/dashboard/user/transactions", iconName: "pages" },
 ];
@@ -119,7 +120,7 @@ export default function Header({ onLogout }: HeaderProps) {
           style={{ color: "var(--color-text)" }}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
-          <Icon name={mobileOpen ? "x" : "menu"} onBackground="accent-weak" />
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </Button>
       </div>
 
