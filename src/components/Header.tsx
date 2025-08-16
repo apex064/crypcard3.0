@@ -52,7 +52,7 @@ export default function Header({ onLogout }: HeaderProps) {
           align="center"
           justify="between"
           fillWidth
-          style={{ maxWidth: "1440px", margin: "0 auto", gap: "2rem" }}
+          style={{ maxWidth: "1440px", margin: "0 auto" }}
         >
           {/* Logo */}
           <Link href="/" style={{ flexShrink: 0 }}>
@@ -61,8 +61,8 @@ export default function Header({ onLogout }: HeaderProps) {
             </Heading>
           </Link>
 
-          {/* Desktop Nav */}
-          <Row gap="2rem" className="desktop-nav" align="center">
+          {/* Desktop nav */}
+          <Row className="desktop-nav" gap="1.5rem" align="center">
             {navItems.map(({ title, href, icon }) => (
               <Link key={title} href={href} passHref>
                 <Button
@@ -81,6 +81,7 @@ export default function Header({ onLogout }: HeaderProps) {
                 </Button>
               </Link>
             ))}
+
             <Button
               variant="outline"
               size="m"
@@ -117,7 +118,7 @@ export default function Header({ onLogout }: HeaderProps) {
           </div>
         </Flex>
 
-        {/* Mobile dropdown menu */}
+        {/* Mobile dropdown */}
         {mobileOpen && (
           <Column
             id="mobile-nav-dropdown"
