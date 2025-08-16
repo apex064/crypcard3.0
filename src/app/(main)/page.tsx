@@ -81,90 +81,91 @@ export default function Home() {
         <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
       </AutoScroll>
 
-      {/* Cards Section */}
-      <Row fillWidth wrap gap="l" justify="center" style={{ maxWidth: "1200px", margin: "0 auto" }}>
-        {/* Card 1 */}
-        <Card radius="l-4" direction="column" border="neutral-alpha-medium" style={{ maxWidth: "400px" }}>
-          <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
-            <Avatar size="xs" src="/images/avatar1.jpg" />
-            <Text variant="label-default-s">Lorant One</Text>
-          </Row>
-          <Media
-            border="neutral-alpha-weak"
-            sizes="400px"
-            fillWidth
-            aspectRatio="4 / 3"
-            radius="l"
-            alt="Proxima b"
-            src="/images/card1.jpg"
-          />
-          <Column fillWidth paddingX="20" paddingY="24" gap="8">
-            <Text variant="body-default-xl">Proxima b</Text>
-            <Text onBackground="neutral-weak" variant="body-default-s">
-              A planet so cruel on the surface, but once you explore what's underneath, you'll question everything you know. Yet, you vibe with it.
-            </Text>
-          </Column>
-          <Line background="neutral-alpha-medium" />
-          <Row
-            paddingX="20" paddingY="12"
-            gap="8"
-            vertical="center"
-            textVariant="label-default-s"
-            onBackground="neutral-medium"
-          >
-            <Icon name="like" size="s" onBackground="neutral-strong" />
-            34
-            <Icon name="chat" size="s" onBackground="neutral-strong" marginLeft="24" />
-            5
-          </Row>
-        </Card>
+      {/* Main Content Section */}
+      <Column fillWidth style={{ maxWidth: "1200px", margin: "0 auto" }} gap="48px">
+        {/* Cards Row - now properly aligned side by side */}
+        <Row fillWidth wrap gap="l" justify="center" align="start">
+          {/* Card 1 */}
+          <Card radius="l-4" direction="column" border="neutral-alpha-medium" style={{ flex: 1, minWidth: "300px", maxWidth: "400px" }}>
+            <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
+              <Avatar size="xs" src="/images/avatar1.jpg" />
+              <Text variant="label-default-s">Lorant One</Text>
+            </Row>
+            <Media
+              border="neutral-alpha-weak"
+              sizes="400px"
+              fillWidth
+              aspectRatio="4 / 3"
+              radius="l"
+              alt="Proxima b"
+              src="/images/card1.jpg"
+            />
+            <Column fillWidth paddingX="20" paddingY="24" gap="8">
+              <Text variant="body-default-xl">Proxima b</Text>
+              <Text onBackground="neutral-weak" variant="body-default-s">
+                A planet so cruel on the surface, but once you explore what's underneath, you'll question everything you know. Yet, you vibe with it.
+              </Text>
+            </Column>
+            <Line background="neutral-alpha-medium" />
+            <Row
+              paddingX="20" paddingY="12"
+              gap="8"
+              vertical="center"
+              textVariant="label-default-s"
+              onBackground="neutral-medium"
+            >
+              <Icon name="like" size="s" onBackground="neutral-strong" />
+              34
+              <Icon name="chat" size="s" onBackground="neutral-strong" marginLeft="24" />
+              5
+            </Row>
+          </Card>
 
-        {/* Card 2 */}
-        <Card radius="l-4" direction="column" border="neutral-alpha-medium" style={{ maxWidth: "400px" }}>
-          <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
-            <Avatar size="xs" src="/images/avatar2.jpg" />
-            <Text variant="label-default-s">Jane Doe</Text>
-          </Row>
-          <Media
-            border="neutral-alpha-weak"
-            sizes="400px"
-            fillWidth
-            aspectRatio="4 / 3"
-            radius="l"
-            alt="Kepler-442b"
-            src="/images/card2.jpg"
-          />
-          <Column fillWidth paddingX="20" paddingY="24" gap="8">
-            <Text variant="body-default-xl">Kepler-442b</Text>
-            <Text onBackground="neutral-weak" variant="body-default-s">
-              This mysterious exoplanet will challenge your understanding of the universe and inspire curiosity in the unexplored.
-            </Text>
-          </Column>
-          <Line background="neutral-alpha-medium" />
-          <Row
-            paddingX="20" paddingY="12"
-            gap="8"
-            vertical="center"
-            textVariant="label-default-s"
-            onBackground="neutral-medium"
-          >
-            <Icon name="like" size="s" onBackground="neutral-strong" />
-            21
-            <Icon name="chat" size="s" onBackground="neutral-strong" marginLeft="24" />
-            3
-          </Row>
-        </Card>
-      </Row>
+          {/* Card 2 */}
+          <Card radius="l-4" direction="column" border="neutral-alpha-medium" style={{ flex: 1, minWidth: "300px", maxWidth: "400px" }}>
+            <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
+              <Avatar size="xs" src="/images/avatar2.jpg" />
+              <Text variant="label-default-s">Jane Doe</Text>
+            </Row>
+            <Media
+              border="neutral-alpha-weak"
+              sizes="400px"
+              fillWidth
+              aspectRatio="4 / 3"
+              radius="l"
+              alt="Kepler-442b"
+              src="/images/card2.jpg"
+            />
+            <Column fillWidth paddingX="20" paddingY="24" gap="8">
+              <Text variant="body-default-xl">Kepler-442b</Text>
+              <Text onBackground="neutral-weak" variant="body-default-s">
+                This mysterious exoplanet will challenge your understanding of the universe and inspire curiosity in the unexplored.
+              </Text>
+            </Column>
+            <Line background="neutral-alpha-medium" />
+            <Row
+              paddingX="20" paddingY="12"
+              gap="8"
+              vertical="center"
+              textVariant="label-default-s"
+              onBackground="neutral-medium"
+            >
+              <Icon name="like" size="s" onBackground="neutral-strong" />
+              21
+              <Icon name="chat" size="s" onBackground="neutral-strong" marginLeft="24" />
+              3
+            </Row>
+          </Card>
+        </Row>
 
-      {/* Footer Media */}
-      <Column fillWidth align="center" marginTop="48px">
+        {/* Footer Media - now properly below the cards */}
         <Media
           src="/image.jpg"
           alt="Preview"
           radius="xl"
           border="neutral-alpha-medium"
           aspectRatio="16 / 9"
-          style={{ maxWidth: "1200px", width: "100%" }}
+          fillWidth
         />
       </Column>
     </Column>
