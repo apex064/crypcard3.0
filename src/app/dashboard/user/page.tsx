@@ -52,12 +52,24 @@ export default function UserDashboard() {
     else setToken(storedToken);
   }, []);
 
+  // --- Feedback helper ---
+  const showFeedback = (
+    variant: "success" | "warning" | "danger" | "info",
+    title: string,
+    description: string
+  ) => {
+    setFeedback({ visible: true, variant, title, description });
+    setTimeout(() => setFeedback(prev => ({ ...prev, visible: false })), 3000);
+  };
+
   // --- Fetch Cards ---
   useEffect(() => {
     if (!token) return;
     const fetchCards = async () => {
       try {
-        const res = await fetch("/api/cards", { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch("/api/cards", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (!res.ok) throw new Error("Failed to fetch cards");
         const data = await res.json();
         setCards(data.cards ?? []);
@@ -69,15 +81,10 @@ export default function UserDashboard() {
     fetchCards();
   }, [token]);
 
-  // --- Feedback helper ---
-  const showFeedback = (variant: "success" | "warning" | "danger" | "info", title: string, description: string) => {
-    setFeedback({ visible: true, variant, title, description });
-    setTimeout(() => setFeedback(prev => ({ ...prev, visible: false })), 3000);
-  };
-
   // --- Request New Card ---
   const handleRequestCard = async () => {
-    if (!token) return showFeedback("warning", "Not Authenticated", "User not authenticated.");
+    if (!token)
+      return showFeedback("warning", "Not Authenticated", "User not authenticated.");
     try {
       const res = await fetch("/api/cards", {
         method: "POST",
@@ -87,7 +94,9 @@ export default function UserDashboard() {
       const data = await res.json();
       if (res.ok) {
         showFeedback("success", "Card Requested", "Card request submitted!");
-        const updatedRes = await fetch("/api/cards", { headers: { Authorization: `Bearer ${token}` } });
+        const updatedRes = await fetch("/api/cards", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const updatedData = await updatedRes.json();
         if (updatedRes.ok) setCards(updatedData.cards);
       } else showFeedback("danger", "Error", data.error ?? "Unknown error");
@@ -99,10 +108,13 @@ export default function UserDashboard() {
   // --- Submit Top-Up ---
   const handleTopupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!token) return showFeedback("warning", "Not Authenticated", "User not authenticated.");
+    if (!token)
+      return showFeedback("warning", "Not Authenticated", "User not authenticated.");
     if (!cardId) return showFeedback("warning", "Select Card", "Please select a card.");
-    if (!topupAmount || parseFloat(topupAmount) < 10) return showFeedback("warning", "Invalid Amount", "Minimum top-up is $10.");
-    if (!txid.trim()) return showFeedback("warning", "TXID Required", "Please enter the transaction ID.");
+    if (!topupAmount || parseFloat(topupAmount) < 10)
+      return showFeedback("warning", "Invalid Amount", "Minimum top-up is $10.");
+    if (!txid.trim())
+      return showFeedback("warning", "TXID Required", "Please enter the transaction ID.");
 
     try {
       const res = await fetch("/api/topup", {
@@ -138,9 +150,24 @@ export default function UserDashboard() {
 
   return (
     <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
-      {/* Feedback */}
+      {/* Feedback fixed position */}
       {feedback.visible && (
-        <Feedback variant={feedback.variant} title={feedback.title} description={feedback.description} />
+        <div
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            zIndex: 9999,
+            minWidth: "300px",
+            maxWidth: "90%",
+          }}
+        >
+          <Feedback
+            variant={feedback.variant}
+            title={feedback.title}
+            description={feedback.description}
+          />
+        </div>
       )}
 
       {/* Header */}
