@@ -48,112 +48,69 @@ export default function LoginPage() {
         shadow="xl"
         radius="xl"
         padding="xl"
-        style={{ maxWidth: "900px", width: "100%" }}
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          margin: "auto",
+        }}
       >
-        <Flex
-          fillWidth
-          wrap
-          gap="l"
-          style={{ flexDirection: "row", justifyContent: "space-between" }}
-        >
-          {/* Left side: form */}
-          <Column
-            flex={1}
-            gap="l"
-            align="center"
-            justify="center"
-            style={{ minWidth: "280px" }}
-          >
-            <Badge textVariant="label-default-m">KripiCard</Badge>
-            <Heading variant="display-strong-l" marginTop="8" align="center">
-              Login to KripiCard
-            </Heading>
-            <Text
-              onBackground="neutral-weak"
-              align="center"
-              marginBottom="16"
-            >
-              Welcome back! Enter your credentials to access your account.
-            </Text>
+        <Column gap="l" align="center" justify="center">
+          <Badge textVariant="label-default-m">KripiCard</Badge>
+          <Heading variant="display-strong-l" marginTop="8" align="center">
+            Login to KripiCard
+          </Heading>
+          <Text onBackground="neutral-weak" align="center" marginBottom="16">
+            Welcome back! Enter your credentials to access your account.
+          </Text>
 
-            <form
-              onSubmit={handleSubmit}
-              style={{ width: "100%", maxWidth: "360px" }}
-            >
-              <Column gap="m">
+          <form style={{ width: "100%" }} onSubmit={handleSubmit}>
+            <Column gap="m">
+              <Input
+                type="email"
+                placeholder="Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+
+              <Flex align="center" gap="2" position="relative">
                 <Input
-                  type="email"
-                  placeholder="Email Address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
+                  style={{ paddingRight: "40px", flex: 1 }}
                 />
+                <IconButton
+                  icon={showPassword ? <EyeOff /> : <Eye />}
+                  variant="ghost"
+                  size="m"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: "absolute", right: "8px" }}
+                />
+              </Flex>
 
-                <Flex align="center" gap="2" position="relative">
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    style={{ paddingRight: "40px", flex: 1 }}
-                  />
-                  <IconButton
-                    icon={showPassword ? <EyeOff /> : <Eye />}
-                    variant="ghost"
-                    size="m"
-                    onClick={() => setShowPassword(!showPassword)}
-                    style={{ position: "absolute", right: "8px" }}
-                  />
-                </Flex>
+              {error && (
+                <Text onBackground="danger-strong" weight="medium" align="center">
+                  {error}
+                </Text>
+              )}
 
-                {error && (
-                  <Text
-                    onBackground="danger-strong"
-                    weight="medium"
-                    align="center"
-                  >
-                    {error}
-                  </Text>
-                )}
+              <Button type="submit" size="l" fillWidth disabled={loading}>
+                {loading ? "Signing In..." : "Sign In"}
+              </Button>
+            </Column>
+          </form>
 
-                <Button type="submit" size="l" fillWidth disabled={loading}>
-                  {loading ? "Signing In..." : "Sign In"}
-                </Button>
-              </Column>
-            </form>
-
-            <Text onBackground="neutral-weak" align="center" marginTop="12">
-              Don't have an account?{" "}
-              <a href="/register" style={{ color: "#3b82f6" }}>
-                Register
-              </a>
-            </Text>
-          </Column>
-
-          {/* Right side: image */}
-          <Flex
-            flex={1}
-            center
-            style={{
-              minWidth: "280px",
-              justifyContent: "center",
-              marginTop: "16px",
-            }}
-          >
-            <img
-              src="login-illustration.png"
-              alt="Login Illustration"
-              style={{
-                maxWidth: "400px",
-                width: "100%",
-                borderRadius: "12px",
-              }}
-            />
-          </Flex>
-        </Flex>
+          <Text onBackground="neutral-weak" align="center" marginTop="12">
+            Don't have an account?{" "}
+            <a href="/register" style={{ color: "#3b82f6" }}>
+              Register
+            </a>
+          </Text>
+        </Column>
       </Card>
     </Flex>
   );
 }
-
