@@ -74,6 +74,7 @@ export default function LoginPage() {
 
           <form style={{ width: "100%" }} onSubmit={handleSubmit}>
             <Column gap="m">
+              {/* Email Input */}
               <Input
                 type="email"
                 placeholder="Email Address"
@@ -82,6 +83,7 @@ export default function LoginPage() {
                 required
               />
 
+              {/* Password Input */}
               <Flex align="center" gap="2" position="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
@@ -89,7 +91,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  style={{ paddingRight: "40px", flex: 1 }}
+                  style={{ width: "100%", paddingRight: "40px" }}
                 />
                 <IconButton
                   icon={showPassword ? <EyeOff /> : <Eye />}
