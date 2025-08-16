@@ -3,17 +3,16 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Row, Icon, Button, Heading } from "@once-ui-system/core";
-import { CreditCard, ArrowUpCircle, BarChart3, LogOut, Menu, X } from "lucide-react";
 
 type HeaderProps = {
   onLogout: () => void;
 };
 
 const navItems = [
-   { title: "Dashboard", href: "/dashboard/user", icon: BarChart3 }, // new link
-  { title: "Cards", href: "/dashboard/user/cards", icon: CreditCard },
-  { title: "Top-Up", href: "/dashboard/user/topup", icon: ArrowUpCircle },
-  { title: "Transactions", href: "/dashboard/user/transactions", icon: BarChart3 },
+  { title: "Dashboard", href: "/dashboard/user", iconName: "pages" },
+  { title: "Cards", href: "/dashboard/user/cards", iconName: "pages" },
+  { title: "Top-Up", href: "/dashboard/user/topup", iconName: "rocket" },
+  { title: "Transactions", href: "/dashboard/user/transactions", iconName: "pages" },
 ];
 
 export default function Header({ onLogout }: HeaderProps) {
@@ -72,7 +71,7 @@ export default function Header({ onLogout }: HeaderProps) {
 
         {/* Desktop Nav */}
         <div className="desktop-nav">
-          {navItems.map(({ title, href, icon }) => (
+          {navItems.map(({ title, href, iconName }) => (
             <Link key={title} href={href} passHref>
               <Button 
                 size="m" 
@@ -84,7 +83,7 @@ export default function Header({ onLogout }: HeaderProps) {
                 }}
               >
                 <Row gap="xs" align="center">
-                  <Icon icon={icon} size="s" color="var(--color-text)" />
+                  <Icon name={iconName} onBackground="accent-weak" />
                   {title}
                 </Row>
               </Button>
@@ -105,7 +104,7 @@ export default function Header({ onLogout }: HeaderProps) {
             }}
           >
             <Row gap="xs" align="center">
-              <Icon icon={LogOut} size="s" color={logoutHover ? "var(--color-danger)" : "var(--color-text)"} />
+              <Icon name="danger" onBackground={logoutHover ? "danger-weak" : "accent-weak"} />
               Logout
             </Row>
           </Button>
@@ -120,14 +119,14 @@ export default function Header({ onLogout }: HeaderProps) {
           style={{ color: "var(--color-text)" }}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          <Icon name={mobileOpen ? "x" : "menu"} onBackground="accent-weak" />
         </Button>
       </div>
 
       {/* Mobile Dropdown */}
       {mobileOpen && (
         <div className="mobile-dropdown" style={{ padding: "0 2rem" }}>
-          {navItems.map(({ title, href, icon }) => (
+          {navItems.map(({ title, href, iconName }) => (
             <Link key={title} href={href} passHref onClick={() => setMobileOpen(false)}>
               <Button 
                 size="m" 
@@ -142,7 +141,7 @@ export default function Header({ onLogout }: HeaderProps) {
                 }}
               >
                 <Row gap="xs" align="center">
-                  <Icon icon={icon} size="s" color="var(--color-text)" />
+                  <Icon name={iconName} onBackground="accent-weak" />
                   {title}
                 </Row>
               </Button>
@@ -166,7 +165,7 @@ export default function Header({ onLogout }: HeaderProps) {
             }}
           >
             <Row gap="xs" align="center">
-              <Icon icon={LogOut} size="s" color={logoutHover ? "var(--color-danger)" : "var(--color-text)"} />
+              <Icon name="danger" onBackground={logoutHover ? "danger-weak" : "accent-weak"} />
               Logout
             </Row>
           </Button>
