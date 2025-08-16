@@ -11,13 +11,9 @@ import {
   Input,
   Icon,
   Badge,
+  Feedback, // import Feedback
 } from "@once-ui-system/core";
-import {
-  CreditCard,
-  Plus,
-  Copy,
-  CheckCircle,
-} from "lucide-react";
+import { CreditCard, Plus, Copy, CheckCircle } from "lucide-react";
 import Header from "@/components/Header";
 
 type CardType = {
@@ -39,6 +35,14 @@ export default function UserDashboard() {
   const [walletCopied, setWalletCopied] = useState(false);
   const [cards, setCards] = useState<CardType[]>([]);
 
+  // --- Feedback state ---
+  const [feedback, setFeedback] = useState<{
+    visible: boolean;
+    variant?: "success" | "warning" | "danger" | "info";
+    title: string;
+    description: string;
+  }>({ visible: false, title: "", description: "" });
+
   const walletAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";
 
   // --- Authentication ---
@@ -59,14 +63,21 @@ export default function UserDashboard() {
         setCards(data.cards ?? []);
       } catch (err) {
         console.error(err);
+        showFeedback("danger", "Error", "Failed to fetch cards");
       }
     };
     fetchCards();
   }, [token]);
 
+  // --- Feedback helper ---
+  const showFeedback = (variant: "success" | "warning" | "danger" | "info", title: string, description: string) => {
+    setFeedback({ visible: true, variant, title, description });
+    setTimeout(() => setFeedback(prev => ({ ...prev, visible: false })), 3000);
+  };
+
   // --- Request New Card ---
   const handleRequestCard = async () => {
-    if (!token) return alert("User not authenticated");
+    if (!token) return showFeedback("warning", "Not Authenticated", "User not authenticated.");
     try {
       const res = await fetch("/api/cards", {
         method: "POST",
@@ -75,23 +86,23 @@ export default function UserDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert("Card request submitted!");
+        showFeedback("success", "Card Requested", "Card request submitted!");
         const updatedRes = await fetch("/api/cards", { headers: { Authorization: `Bearer ${token}` } });
-        const updatedData = await res.json();
+        const updatedData = await updatedRes.json();
         if (updatedRes.ok) setCards(updatedData.cards);
-      } else alert("Error: " + (data.error ?? "Unknown"));
+      } else showFeedback("danger", "Error", data.error ?? "Unknown error");
     } catch (err) {
-      alert("Failed to request card: " + err);
+      showFeedback("danger", "Error", "Failed to request card");
     }
   };
 
   // --- Submit Top-Up ---
   const handleTopupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!token) return alert("User not authenticated");
-    if (!cardId) return alert("Select a card.");
-    if (!topupAmount || parseFloat(topupAmount) < 10) return alert("Minimum top-up is $10.");
-    if (!txid.trim()) return alert("TXID required.");
+    if (!token) return showFeedback("warning", "Not Authenticated", "User not authenticated.");
+    if (!cardId) return showFeedback("warning", "Select Card", "Please select a card.");
+    if (!topupAmount || parseFloat(topupAmount) < 10) return showFeedback("warning", "Invalid Amount", "Minimum top-up is $10.");
+    if (!txid.trim()) return showFeedback("warning", "TXID Required", "Please enter the transaction ID.");
 
     try {
       const res = await fetch("/api/topup", {
@@ -101,13 +112,13 @@ export default function UserDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert("Top-up submitted!");
+        showFeedback("success", "Top-Up Submitted", "Your top-up request has been submitted!");
         setTopupAmount("");
         setTxid("");
         setCardId("");
-      } else alert("Error: " + (data.error ?? "Unknown"));
+      } else showFeedback("danger", "Error", data.error ?? "Unknown error");
     } catch (err) {
-      alert("Failed to submit top-up: " + err);
+      showFeedback("danger", "Error", "Failed to submit top-up");
     }
   };
 
@@ -116,6 +127,7 @@ export default function UserDashboard() {
     navigator.clipboard.writeText(walletAddress);
     setWalletCopied(true);
     setTimeout(() => setWalletCopied(false), 2000);
+    showFeedback("success", "Copied!", "Wallet address copied to clipboard.");
   };
 
   // --- Logout ---
@@ -126,6 +138,11 @@ export default function UserDashboard() {
 
   return (
     <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
+      {/* Feedback */}
+      {feedback.visible && (
+        <Feedback variant={feedback.variant} title={feedback.title} description={feedback.description} />
+      )}
+
       {/* Header */}
       <Header onLogout={handleLogout} />
 
