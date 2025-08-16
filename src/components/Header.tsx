@@ -52,8 +52,9 @@ export default function Header({ onLogout }: HeaderProps) {
           align="center"
           justify="between"
           fillWidth
-          style={{ maxWidth: "1440px", margin: "0 auto" }}
+          style={{ maxWidth: "1440px", margin: "0 auto", gap: "2rem" }}
         >
+          {/* Logo */}
           <Link href="/" style={{ flexShrink: 0 }}>
             <Heading variant="heading-strong-m" style={{ color: "var(--color-text)", cursor: "pointer" }}>
               KripiCard
@@ -61,7 +62,7 @@ export default function Header({ onLogout }: HeaderProps) {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="desktop-nav">
+          <Row gap="2rem" className="desktop-nav" align="center">
             {navItems.map(({ title, href, icon }) => (
               <Link key={title} href={href} passHref>
                 <Button
@@ -89,7 +90,6 @@ export default function Header({ onLogout }: HeaderProps) {
               style={{
                 color: logoutHover ? "var(--color-danger)" : "var(--color-text)",
                 borderColor: logoutHover ? "var(--color-danger)" : "var(--color-border)",
-                marginLeft: "0.5rem",
                 transition: "all 0.2s ease",
                 background: logoutHover ? "var(--color-bg-hover)" : "transparent",
               }}
@@ -103,10 +103,10 @@ export default function Header({ onLogout }: HeaderProps) {
                 Logout
               </Row>
             </Button>
-          </div>
+          </Row>
 
-          {/* Mobile NavIcon toggle */}
-          <div className="mobile-nav">
+          {/* Mobile Nav toggle */}
+          <div className="mobile-nav" style={{ marginLeft: "1rem" }}>
             <NavIcon
               isActive={mobileOpen}
               onClick={toggleMobile}
@@ -131,24 +131,12 @@ export default function Header({ onLogout }: HeaderProps) {
           >
             {navItems.map(({ title, href }) => (
               <Link key={title} href={href} passHref onClick={() => setMobileOpen(false)}>
-                <Button
-                  fillWidth
-                  horizontal="start"
-                  size="l"
-                  variant="ghost"
-                  style={{ justifyContent: "flex-start" }}
-                >
+                <Button fillWidth horizontal="start" size="l" variant="ghost" style={{ justifyContent: "flex-start" }}>
                   {title}
                 </Button>
               </Link>
             ))}
-            <Button
-              fillWidth
-              horizontal="start"
-              size="l"
-              variant="outline"
-              onClick={onLogout}
-            >
+            <Button fillWidth horizontal="start" size="l" variant="outline" onClick={onLogout}>
               Logout
             </Button>
           </Column>
@@ -158,8 +146,6 @@ export default function Header({ onLogout }: HeaderProps) {
       <style jsx>{`
         .desktop-nav {
           display: none;
-          gap: 1rem;
-          align-items: center;
         }
         .mobile-nav {
           display: block;
