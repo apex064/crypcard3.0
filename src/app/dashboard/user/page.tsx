@@ -124,7 +124,7 @@ export default function UserDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
-        showFeedback("success", "Top-Up Submitted", "Your top-up request has been submitted!");
+        showFeedback("success", "Top-Up Submitted", data.message || "Top-up submitted!");
         setTopupAmount("");
         setTxid("");
         setCardId("");
