@@ -31,7 +31,7 @@ async function saveTokens(accessToken: string, refreshToken: string, expiresIn: 
 }
 
 async function loginAndGetApiToken(): Promise<string> {
-  const { ok, data } = await fetchWithDebug("https://lion.alpha.africa/oauth/token", {
+  const { ok, data } = await fetchWithDebug("https://omega.alpha.africa/oauth/token", {
     method: "POST",
     headers: { Accept: "application/json", "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -52,7 +52,7 @@ async function refreshApiToken(): Promise<string> {
   const storedRefreshToken = result.rows[0]?.refresh_token;
   if (!storedRefreshToken) throw new Error("No stored refresh token found");
 
-  const { ok, data } = await fetchWithDebug("https://lion.alpha.africa/oauth/token", {
+  const { ok, data } = await fetchWithDebug("https://omega.alpha.africa/oauth/token", {
     method: "POST",
     headers: { Accept: "application/json", "Content-Type": "application/json" },
     body: JSON.stringify({
