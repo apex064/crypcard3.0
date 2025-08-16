@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button, Input, Card, CardHeader, CardTitle, CardDescription, CardContent } from "@once-ui-system/core"
+import { Button, Input, Card } from "@once-ui-system/core"
 
 interface CardData {
   id: string
@@ -122,43 +122,42 @@ export default function AdminDashboard() {
 
       <div className="grid gap-6">
         {users.map(user => (
-          <Card key={user.id} variant="subtle">
-            <CardHeader>
-              <CardTitle>{user.first_name} {user.last_name}</CardTitle>
-              <CardDescription>{user.email}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex space-x-2">
-                <Button variant="primary" onClick={() => performAction("create_card", { userId: user.id, fundAmount })}>
-                  Create Card
-                </Button>
-                <Button variant="destructive" onClick={() => performAction("delete_user", { userId: user.id })}>
-                  Delete User
-                </Button>
-              </div>
+          <Card key={user.id} variant="subtle" className="p-4">
+            <div className="mb-2">
+              <h2 className="font-bold text-lg">{user.first_name} {user.last_name}</h2>
+              <p className="text-sm text-gray-500">{user.email}</p>
+            </div>
 
-              {user.cards.length > 0 && (
-                <div className="space-y-2">
-                  {user.cards.map(card => (
-                    <Card key={card.id} variant="outline" className="p-3 flex justify-between items-center">
-                      <div>
-                        <p>{card.type} - {card.number}</p>
-                        <p>Balance: ${formatAmount(card.balance)}</p>
-                        <p>Status: {card.status}</p>
-                      </div>
-                      <div className="flex space-x-2">
-                        <Button size="sm" variant="primary" onClick={() => performAction("topup_card", { userId: user.id, cardId: card.id, amount: fundAmount })}>
-                          Top-up
-                        </Button>
-                        <Button size="sm" variant="destructive" onClick={() => performAction("delete_card", { cardId: card.id })}>
-                          Delete
-                        </Button>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </CardContent>
+            <div className="flex space-x-2 mb-4">
+              <Button variant="primary" onClick={() => performAction("create_card", { userId: user.id, fundAmount })}>
+                Create Card
+              </Button>
+              <Button variant="destructive" onClick={() => performAction("delete_user", { userId: user.id })}>
+                Delete User
+              </Button>
+            </div>
+
+            {user.cards.length > 0 && (
+              <div className="space-y-2">
+                {user.cards.map(card => (
+                  <Card key={card.id} variant="outline" className="p-3 flex justify-between items-center">
+                    <div>
+                      <p>{card.type} - {card.number}</p>
+                      <p>Balance: ${formatAmount(card.balance)}</p>
+                      <p>Status: {card.status}</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button size="sm" variant="primary" onClick={() => performAction("topup_card", { userId: user.id, cardId: card.id, amount: fundAmount })}>
+                        Top-up
+                      </Button>
+                      <Button size="sm" variant="destructive" onClick={() => performAction("delete_card", { cardId: card.id })}>
+                        Delete
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
           </Card>
         ))}
       </div>
