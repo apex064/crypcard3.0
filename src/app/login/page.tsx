@@ -11,13 +11,10 @@ import {
   Badge,
   Card,
   IconButton,
-  useTheme
 } from "@once-ui-system/core";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
-  const theme = useTheme(); // access Once UI theme tokens
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -53,7 +50,7 @@ export default function LoginPage() {
       padding="l"
       style={{
         minHeight: "100vh",
-        backgroundColor: theme.colors.background, // use Once UI background token
+        backgroundColor: "var(--once-colors-background)",
       }}
     >
       <Card
@@ -61,8 +58,8 @@ export default function LoginPage() {
         radius="xl"
         padding="xl"
         style={{
-          width: "90%",
-          maxWidth: "520px", // slightly bigger on desktop
+          width: "95%",
+          maxWidth: "560px", // slightly bigger on desktop
           margin: "auto",
         }}
       >
@@ -104,7 +101,11 @@ export default function LoginPage() {
               </Flex>
 
               {error && (
-                <Text onBackground="danger-strong" weight="medium" align="center">
+                <Text
+                  onBackground="danger-strong"
+                  weight="medium"
+                  align="center"
+                >
                   {error}
                 </Text>
               )}
@@ -117,7 +118,10 @@ export default function LoginPage() {
 
           <Text onBackground="neutral-weak" align="center" marginTop="12">
             Don't have an account?{" "}
-            <a href="/register" style={{ color: theme.colors.primary }}>
+            <a
+              href="/register"
+              style={{ color: "var(--once-colors-primary)" }}
+            >
               Register
             </a>
           </Text>
