@@ -81,7 +81,7 @@ export default function Home() {
         <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
       </AutoScroll>
 
-      {/* Cards Section - Strictly Horizontal */}
+      {/* Cards Section - Three Cards Horizontal */}
       <Row 
         fillWidth 
         gap="l" 
@@ -89,9 +89,9 @@ export default function Home() {
         style={{ 
           maxWidth: "1200px", 
           margin: "0 auto",
-          flexWrap: "nowrap", // Prevent wrapping
-          overflowX: "auto", // Allow horizontal scrolling if needed
-          paddingBottom: "16px" // Space for scrollbar
+          flexWrap: "nowrap",
+          overflowX: "auto",
+          paddingBottom: "16px"
         }}
       >
         {/* Card 1 */}
@@ -100,8 +100,8 @@ export default function Home() {
           direction="column" 
           border="neutral-alpha-medium" 
           style={{ 
-            width: "400px",
-            flexShrink: 0 // Prevent shrinking
+            width: "380px",
+            flexShrink: 0
           }}
         >
           <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
@@ -120,7 +120,7 @@ export default function Home() {
           <Column fillWidth paddingX="20" paddingY="24" gap="8">
             <Text variant="body-default-xl">Proxima b</Text>
             <Text onBackground="neutral-weak" variant="body-default-s">
-              A planet so cruel on the surface, but once you explore what's underneath, you'll question everything you know. Yet, you vibe with it.
+              A planet so cruel on the surface, but once you explore what's underneath, you'll question everything you know.
             </Text>
           </Column>
           <Line background="neutral-alpha-medium" />
@@ -144,8 +144,8 @@ export default function Home() {
           direction="column" 
           border="neutral-alpha-medium" 
           style={{ 
-            width: "400px",
-            flexShrink: 0 // Prevent shrinking
+            width: "380px",
+            flexShrink: 0
           }}
         >
           <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
@@ -164,7 +164,7 @@ export default function Home() {
           <Column fillWidth paddingX="20" paddingY="24" gap="8">
             <Text variant="body-default-xl">Kepler-442b</Text>
             <Text onBackground="neutral-weak" variant="body-default-s">
-              This mysterious exoplanet will challenge your understanding of the universe and inspire curiosity in the unexplored.
+              This mysterious exoplanet will challenge your understanding of the universe and inspire curiosity.
             </Text>
           </Column>
           <Line background="neutral-alpha-medium" />
@@ -181,9 +181,53 @@ export default function Home() {
             3
           </Row>
         </Card>
+
+        {/* Card 3 - New Card */}
+        <Card 
+          radius="l-4" 
+          direction="column" 
+          border="neutral-alpha-medium" 
+          style={{ 
+            width: "380px",
+            flexShrink: 0
+          }}
+        >
+          <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
+            <Avatar size="xs" src="/images/avatar3.jpg" />
+            <Text variant="label-default-s">John Smith</Text>
+          </Row>
+          <Media
+            border="neutral-alpha-weak"
+            sizes="400px"
+            fillWidth
+            aspectRatio="4 / 3"
+            radius="l"
+            alt="TRAPPIST-1e"
+            src="/images/card3.jpg"
+          />
+          <Column fillWidth paddingX="20" paddingY="24" gap="8">
+            <Text variant="body-default-xl">TRAPPIST-1e</Text>
+            <Text onBackground="neutral-weak" variant="body-default-s">
+              An Earth-sized exoplanet that might have liquid water and potentially habitable conditions.
+            </Text>
+          </Column>
+          <Line background="neutral-alpha-medium" />
+          <Row
+            paddingX="20" paddingY="12"
+            gap="8"
+            vertical="center"
+            textVariant="label-default-s"
+            onBackground="neutral-medium"
+          >
+            <Icon name="like" size="s" onBackground="neutral-strong" />
+            42
+            <Icon name="chat" size="s" onBackground="neutral-strong" marginLeft="24" />
+            7
+          </Row>
+        </Card>
       </Row>
 
-      {/* Footer Media - Below the horizontal cards */}
+      {/* Footer Media */}
       <Column fillWidth align="center" marginTop="48px" style={{ maxWidth: "1200px", margin: "0 auto" }}>
         <Media
           src="/image.jpg"
