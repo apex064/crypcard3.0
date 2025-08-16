@@ -10,6 +10,7 @@ import {
   Button,
   Input,
   Badge,
+  Feedback,
 } from "@once-ui-system/core";
 import { ArrowUpCircle, Copy, CheckCircle } from "lucide-react";
 import Header from "@/components/Header";
@@ -43,8 +44,27 @@ export default function TopUpPage() {
   const [history, setHistory] = useState<TopupHistoryType[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // --- Feedback state ---
+  const [feedback, setFeedback] = useState<{
+    visible: boolean;
+    variant?: "success" | "warning" | "danger" | "info";
+    title: string;
+    description: string;
+  }>({ visible: false, title: "", description: "" });
+
   const walletAddress = "TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE";
 
+  // --- Show feedback helper ---
+  const showFeedback = (
+    variant: "success" | "warning" | "danger" | "info",
+    title: string,
+    description: string
+  ) => {
+    setFeedback({ visible: true, variant, title, description });
+    setTimeout(() => setFeedback(prev => ({ ...prev, visible: false })), 3000);
+  };
+
+  // --- Authentication ---
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (!storedToken) window.location.href = "/login";
@@ -66,6 +86,7 @@ export default function TopUpPage() {
       setCards(data.cards ?? []);
     } catch (err) {
       console.error(err);
+      showFeedback("danger", "Error", "Failed to fetch cards");
     }
   };
 
@@ -78,6 +99,7 @@ export default function TopUpPage() {
       setHistory(data.data ?? []);
     } catch (err) {
       console.error(err);
+      showFeedback("danger", "Error", "Failed to fetch top-up history");
     }
   };
 
@@ -85,16 +107,19 @@ export default function TopUpPage() {
     try {
       await navigator.clipboard.writeText(walletAddress);
       setWalletCopied(true);
+      showFeedback("success", "Copied!", "Wallet address copied to clipboard.");
       setTimeout(() => setWalletCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy wallet address", err);
+      showFeedback("danger", "Error", "Failed to copy wallet address");
     }
   };
 
   const handleTopupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!cardId || !topupAmount || !txid)
-      return alert("Please fill all fields");
+    if (!cardId || !topupAmount || !txid) {
+      return showFeedback("warning", "Incomplete Fields", "Please fill all fields");
+    }
     if (!token) return;
 
     setLoading(true);
@@ -113,13 +138,13 @@ export default function TopUpPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Top-up failed");
-      alert(data.message || "Top-up submitted!");
+      showFeedback("success", "Top-Up Submitted", data.message || "Top-up submitted!");
       setTopupAmount("");
       setTxid("");
       setCardId("");
       fetchHistory();
     } catch (err: any) {
-      alert(err.message || "Unexpected error");
+      showFeedback("danger", "Error", err.message || "Unexpected error");
     } finally {
       setLoading(false);
     }
@@ -147,6 +172,26 @@ export default function TopUpPage() {
 
   return (
     <Column fillWidth fillHeight gap="l" padding="l" style={{ minHeight: "100vh" }}>
+      {/* Feedback fixed position */}
+      {feedback.visible && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            zIndex: 9999,
+            minWidth: "300px",
+            maxWidth: "90%",
+          }}
+        >
+          <Feedback
+            variant={feedback.variant}
+            title={feedback.title}
+            description={feedback.description}
+          />
+        </div>
+      )}
+
       <Header />
 
       {/* Top-Up Title Pill */}
