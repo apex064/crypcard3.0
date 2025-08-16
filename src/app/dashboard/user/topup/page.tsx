@@ -313,7 +313,7 @@ export default function TopUpPage() {
                   {h.txid.substring(0, 20)}...
                 </Text>
               </Column>
-              <Column justify="right" style={{ alignItems: "flex-end" }}>
+              <Column justify="center" style={{ alignItems: "flex-end" }}>
                 {getStatusBadge(h.status)}
               </Column>
             </Flex>
