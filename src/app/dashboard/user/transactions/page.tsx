@@ -84,10 +84,16 @@ export default function TransactionsPage() {
       {/* Header */}
       <Header onLogout={handleLogout} />
 
-      {/* Transactions Header */}
-      <Heading variant="title-strong-m" style={{ marginBottom: "1rem" }}>
-        Transactions
-      </Heading>
+      {/* Transactions Header as Pill */}
+      <Flex align="center" style={{ marginBottom: "1rem" }}>
+        <Badge
+          variant="contrast"
+          size="m"
+          style={{ borderRadius: "50px", padding: "0.5rem 1.5rem" }}
+        >
+          Transactions
+        </Badge>
+      </Flex>
 
       {/* Transactions List */}
       <Column gap="m">
@@ -123,4 +129,3 @@ export default function TransactionsPage() {
     </Column>
   );
 }
-
