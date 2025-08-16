@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Row, Icon, Button, Heading, Column, Flex } from "@once-ui-system/core";
 import { CreditCard, ArrowUpCircle, BarChart3, LogOut } from "lucide-react";
-import { NavIcon } from "@once-ui/components";
+import { NavIcon } from "@once-ui-system/core";
 
 type HeaderProps = {
   onLogout: () => void;
