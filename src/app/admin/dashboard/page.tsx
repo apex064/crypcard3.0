@@ -10,13 +10,7 @@ import {
   Heading, 
   Text, 
   Badge, 
-  Line,
-  Loader,
-  Table,
-  TableRow,
-  TableCell,
-  TableHeader,
-  TableBody
+  Line
 } from "@once-ui-system/core";
 
 interface CardData {
@@ -118,6 +112,13 @@ export default function AdminDashboard() {
     return <Badge variant={variant}>{status}</Badge>;
   };
 
+  // Simple loading spinner component
+  const LoadingSpinner = () => (
+    <div className="flex justify-center items-center py-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+  );
+
   return (
     <Column fillWidth padding="l" gap="l" style={{ minHeight: "100vh" }}>
       {/* Header Section */}
@@ -153,9 +154,7 @@ export default function AdminDashboard() {
       </Card>
 
       {loading ? (
-        <Row justify="center">
-          <Loader size="xl" />
-        </Row>
+        <LoadingSpinner />
       ) : (
         <>
           {/* Users Section */}
@@ -197,51 +196,53 @@ export default function AdminDashboard() {
                     {user.cards.length > 0 && (
                       <Column gap="s">
                         <Text variant="label-default-m">Cards:</Text>
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableCell>Type</TableCell>
-                              <TableCell>Number</TableCell>
-                              <TableCell>Balance</TableCell>
-                              <TableCell>Status</TableCell>
-                              <TableCell>Actions</TableCell>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {user.cards.map(card => (
-                              <TableRow key={card.id}>
-                                <TableCell>{card.type}</TableCell>
-                                <TableCell>•••• •••• •••• {card.number.slice(-4)}</TableCell>
-                                <TableCell>${formatAmount(card.balance)}</TableCell>
-                                <TableCell>{getStatusBadge(card.status)}</TableCell>
-                                <TableCell>
-                                  <Row gap="s">
-                                    <Button 
-                                      size="sm" 
-                                      variant="primary" 
-                                      onClick={() => performAction("topup_card", { 
-                                        userId: user.id, 
-                                        cardId: card.id, 
-                                        amount: fundAmount 
-                                      })}
-                                    >
-                                      Top-up
-                                    </Button>
-                                    <Button 
-                                      size="sm" 
-                                      variant="destructive" 
-                                      onClick={() => performAction("delete_card", { 
-                                        cardId: card.id 
-                                      })}
-                                    >
-                                      Delete
-                                    </Button>
-                                  </Row>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead>
+                              <tr className="text-left border-b border-neutral-alpha-medium">
+                                <th className="p-3">Type</th>
+                                <th className="p-3">Number</th>
+                                <th className="p-3">Balance</th>
+                                <th className="p-3">Status</th>
+                                <th className="p-3">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {user.cards.map(card => (
+                                <tr key={card.id} className="border-b border-neutral-alpha-medium">
+                                  <td className="p-3">{card.type}</td>
+                                  <td className="p-3">•••• •••• •••• {card.number.slice(-4)}</td>
+                                  <td className="p-3">${formatAmount(card.balance)}</td>
+                                  <td className="p-3">{getStatusBadge(card.status)}</td>
+                                  <td className="p-3">
+                                    <Row gap="s">
+                                      <Button 
+                                        size="sm" 
+                                        variant="primary" 
+                                        onClick={() => performAction("topup_card", { 
+                                          userId: user.id, 
+                                          cardId: card.id, 
+                                          amount: fundAmount 
+                                        })}
+                                      >
+                                        Top-up
+                                      </Button>
+                                      <Button 
+                                        size="sm" 
+                                        variant="destructive" 
+                                        onClick={() => performAction("delete_card", { 
+                                          cardId: card.id 
+                                        })}
+                                      >
+                                        Delete
+                                      </Button>
+                                    </Row>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </Column>
                     )}
                   </Column>
@@ -255,38 +256,40 @@ export default function AdminDashboard() {
             <Column gap="m">
               <Heading variant="heading-default-xl">Pending Top-ups</Heading>
               <Card padding="l" radius="l" border="neutral-alpha-medium">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableCell>User ID</TableCell>
-                      <TableCell>Card ID</TableCell>
-                      <TableCell>Amount</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Action</TableCell>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {pendingTopups.map(topup => (
-                      <TableRow key={topup.id}>
-                        <TableCell>{topup.user_id}</TableCell>
-                        <TableCell>{topup.card_id.slice(0, 8)}...</TableCell>
-                        <TableCell>${formatAmount(topup.amount)}</TableCell>
-                        <TableCell>{getStatusBadge(topup.status)}</TableCell>
-                        <TableCell>
-                          <Button 
-                            size="sm" 
-                            variant="primary" 
-                            onClick={() => performAction("mark_topup_completed", { 
-                              topupId: topup.id 
-                            })}
-                          >
-                            Mark Completed
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="text-left border-b border-neutral-alpha-medium">
+                        <th className="p-3">User ID</th>
+                        <th className="p-3">Card ID</th>
+                        <th className="p-3">Amount</th>
+                        <th className="p-3">Status</th>
+                        <th className="p-3">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pendingTopups.map(topup => (
+                        <tr key={topup.id} className="border-b border-neutral-alpha-medium">
+                          <td className="p-3">{topup.user_id}</td>
+                          <td className="p-3">{topup.card_id.slice(0, 8)}...</td>
+                          <td className="p-3">${formatAmount(topup.amount)}</td>
+                          <td className="p-3">{getStatusBadge(topup.status)}</td>
+                          <td className="p-3">
+                            <Button 
+                              size="sm" 
+                              variant="primary" 
+                              onClick={() => performAction("mark_topup_completed", { 
+                                topupId: topup.id 
+                              })}
+                            >
+                              Mark Completed
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </Card>
             </Column>
           )}
