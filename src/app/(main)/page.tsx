@@ -10,12 +10,12 @@ import {
   Logo,
   Line,
   LetterFx,
+  AutoScroll,
   Card,
   Media,
   Avatar,
   Icon,
 } from "@once-ui-system/core";
-import "./Home.css"; // For autoscroll animation
 
 export default function Home() {
   return (
@@ -28,6 +28,7 @@ export default function Home() {
         align="start"
         style={{ maxWidth: "1200px", margin: "0 auto", gap: "32px" }}
       >
+        {/* Left: Text Content */}
         <Column maxWidth="s" gap="l" align="start">
           <Badge
             textVariant="code-default-s"
@@ -70,81 +71,93 @@ export default function Home() {
         </Column>
       </Row>
 
-      {/* Infinite AutoScroll Logos */}
-      <div className="autoscroll-container" style={{ marginTop: "48px", marginBottom: "48px" }}>
-        <div className="autoscroll-track">
-          <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
-          <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
-          <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
-          <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
-          <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
-          <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
+      {/* AutoScroll Logos */}
+      <AutoScroll style={{ marginTop: "48px", marginBottom: "48px" }}>
+        <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
+        <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
+        <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
+        <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
+        <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
+        <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
+      </AutoScroll>
 
-          {/* Repeat for seamless scroll */}
-          <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
-          <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
-          <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
-          <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
-          <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
-          <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
-        </div>
-      </div>
-
-      {/* Three Cards Side by Side */}
-      <Row
-        fillWidth
-        wrap
-        gap="24px"
-        justify="center"
-        style={{ maxWidth: "1200px", margin: "0 auto", marginBottom: "48px" }}
-      >
-        {[1, 2, 3].map((i) => (
-          <Card
-            key={i}
-            radius="l-4"
-            direction="column"
-            border="neutral-alpha-medium"
-            style={{ flex: "1 1 300px", maxWidth: "360px" }}
+      {/* Cards Section */}
+      <Row fillWidth wrap gap="l" justify="center" style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        {/* Card 1 */}
+        <Card radius="l-4" direction="column" border="neutral-alpha-medium" style={{ maxWidth: "400px" }}>
+          <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
+            <Avatar size="xs" src="/images/avatar1.jpg" />
+            <Text variant="label-default-s">Lorant One</Text>
+          </Row>
+          <Media
+            border="neutral-alpha-weak"
+            sizes="400px"
+            fillWidth
+            aspectRatio="4 / 3"
+            radius="l"
+            alt="Proxima b"
+            src="/images/card1.jpg"
+          />
+          <Column fillWidth paddingX="20" paddingY="24" gap="8">
+            <Text variant="body-default-xl">Proxima b</Text>
+            <Text onBackground="neutral-weak" variant="body-default-s">
+              A planet so cruel on the surface, but once you explore what's underneath, you'll question everything you know. Yet, you vibe with it.
+            </Text>
+          </Column>
+          <Line background="neutral-alpha-medium" />
+          <Row
+            paddingX="20" paddingY="12"
+            gap="8"
+            vertical="center"
+            textVariant="label-default-s"
+            onBackground="neutral-medium"
           >
-            <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
-              <Avatar size="xs" src={`/images/avatar${i}.jpg`} />
-              <Text variant="label-default-s">User {i}</Text>
-            </Row>
-            <Media
-              border="neutral-alpha-weak"
-              sizes="400px"
-              fillWidth
-              aspectRatio="4 / 3"
-              radius="l"
-              alt={`Card ${i}`}
-              src={`/images/card${i}.jpg`}
-            />
-            <Column fillWidth paddingX="20" paddingY="24" gap="8">
-              <Text variant="body-default-xl">Card Title {i}</Text>
-              <Text onBackground="neutral-weak" variant="body-default-s">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Discover the features and enjoy the benefits.
-              </Text>
-            </Column>
-            <Line background="neutral-alpha-medium" />
-            <Row
-              paddingX="20"
-              paddingY="12"
-              gap="8"
-              vertical="center"
-              textVariant="label-default-s"
-              onBackground="neutral-medium"
-            >
-              <Icon name="like" size="s" onBackground="neutral-strong" />
-              {i * 10}
-              <Icon name="chat" size="s" onBackground="neutral-strong" marginLeft="24" />
-              {i * 2}
-            </Row>
-          </Card>
-        ))}
+            <Icon name="like" size="s" onBackground="neutral-strong" />
+            34
+            <Icon name="chat" size="s" onBackground="neutral-strong" marginLeft="24" />
+            5
+          </Row>
+        </Card>
+
+        {/* Card 2 */}
+        <Card radius="l-4" direction="column" border="neutral-alpha-medium" style={{ maxWidth: "400px" }}>
+          <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
+            <Avatar size="xs" src="/images/avatar2.jpg" />
+            <Text variant="label-default-s">Jane Doe</Text>
+          </Row>
+          <Media
+            border="neutral-alpha-weak"
+            sizes="400px"
+            fillWidth
+            aspectRatio="4 / 3"
+            radius="l"
+            alt="Kepler-442b"
+            src="/images/card2.jpg"
+          />
+          <Column fillWidth paddingX="20" paddingY="24" gap="8">
+            <Text variant="body-default-xl">Kepler-442b</Text>
+            <Text onBackground="neutral-weak" variant="body-default-s">
+              This mysterious exoplanet will challenge your understanding of the universe and inspire curiosity in the unexplored.
+            </Text>
+          </Column>
+          <Line background="neutral-alpha-medium" />
+          <Row
+            paddingX="20" paddingY="12"
+            gap="8"
+            vertical="center"
+            textVariant="label-default-s"
+            onBackground="neutral-medium"
+          >
+            <Icon name="like" size="s" onBackground="neutral-strong" />
+            21
+            <Icon name="chat" size="s" onBackground="neutral-strong" marginLeft="24" />
+            3
+          </Row>
+        </Card>
       </Row>
 
-      {/* Footer Media Preview */}
-      <Column fillWidth align="center">
+      {/* Footer Media */}
+      <Column fillWidth align="center" marginTop="48px">
         <Media
           src="/image.jpg"
           alt="Preview"
