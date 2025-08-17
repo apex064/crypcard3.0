@@ -63,7 +63,7 @@ export default function Home() {
             href="/register"
             data-border="rounded"
             weight="default"
-            prefixIcon="credit-card"
+            prefixIcon="rocket"
             arrowIcon
           >
             Get Started
@@ -72,41 +72,41 @@ export default function Home() {
       </Row>
 
       {/* AutoScroll Logos */}
-      <AutoScroll style={{ marginTop: "48px", marginBottom: "48px" }}>
-        <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
-        <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
-        <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
-        <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
-        <Logo className="dark-flex" wordmark="/trademark/type-dark.svg" size="s" href="/" />
-        <Logo className="light-flex" wordmark="/trademark/type-light.svg" size="s" href="/" />
+      <AutoScroll style={{ marginTop: "30px", marginBottom: "30px" }}>
+        <Logo className="dark-flex" wordmark="/trademark/skrill.svg" size="s" href="/" />
+        <Logo className="light-flex" wordmark="/trademark/paypal.svg" size="s" href="/" />
+        <Logo className="dark-flex" wordmark="/trademark/google-pay.svg" size="s" href="/" />
+        <Logo className="light-flex" wordmark="/trademark/applepay.svg" size="s" href="/" />
+        <Logo className="dark-flex" wordmark="/trademark/applepay.svg" size="s" href="/" />
+        <Logo className="light-flex" wordmark="/trademark/paypal.svg" size="s" href="/" />
       </AutoScroll>
 
       {/* Cards Section - Three Cards Horizontal */}
-      <Row 
-        fillWidth 
-        gap="l" 
+      <Row
+        fillWidth
+        gap="l"
         justify="center"
-        style={{ 
-          maxWidth: "1200px", 
+        style={{
+          maxWidth: "1200px",
           margin: "0 auto",
           flexWrap: "nowrap",
           overflowX: "auto",
-          paddingBottom: "16px"
+          paddingBottom: "16px",
         }}
       >
         {/* Card 1 */}
-        <Card 
-          radius="l-4" 
-          direction="column" 
-          border="neutral-alpha-medium" 
-          style={{ 
+        <Card
+          radius="l-4"
+          direction="column"
+          border="neutral-alpha-medium"
+          style={{
             width: "380px",
-            flexShrink: 0
+            flexShrink: 0,
           }}
         >
           <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
-            <Avatar size="xs" src="/images/avatar1.jpg" />
-            <Text variant="label-default-s">Lorant One</Text>
+            <Avatar size="xs" src="/images/avatar1.png" />
+            <Text variant="label-default-s">TRC20</Text>
           </Row>
           <Media
             border="neutral-alpha-weak"
@@ -114,18 +114,19 @@ export default function Home() {
             fillWidth
             aspectRatio="4 / 3"
             radius="l"
-            alt="Proxima b"
+            alt="TRC20"
             src="/images/card1.jpg"
           />
           <Column fillWidth paddingX="20" paddingY="24" gap="8">
             <Text variant="body-default-xl">Proxima b</Text>
             <Text onBackground="neutral-weak" variant="body-default-s">
-              A planet so cruel on the surface, but once you explore what's underneath, you'll question everything you know.
+              best rates avalible in the market.
             </Text>
           </Column>
           <Line background="neutral-alpha-medium" />
           <Row
-            paddingX="20" paddingY="12"
+            paddingX="20"
+            paddingY="12"
             gap="8"
             vertical="center"
             textVariant="label-default-s"
@@ -139,13 +140,13 @@ export default function Home() {
         </Card>
 
         {/* Card 2 */}
-        <Card 
-          radius="l-4" 
-          direction="column" 
-          border="neutral-alpha-medium" 
-          style={{ 
+        <Card
+          radius="l-4"
+          direction="column"
+          border="neutral-alpha-medium"
+          style={{
             width: "380px",
-            flexShrink: 0
+            flexShrink: 0,
           }}
         >
           <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
@@ -158,18 +159,19 @@ export default function Home() {
             fillWidth
             aspectRatio="4 / 3"
             radius="l"
-            alt="Kepler-442b"
+            alt="smart chain"
             src="/images/card2.jpg"
           />
           <Column fillWidth paddingX="20" paddingY="24" gap="8">
             <Text variant="body-default-xl">Kepler-442b</Text>
             <Text onBackground="neutral-weak" variant="body-default-s">
-              This mysterious exoplanet will challenge your understanding of the universe and inspire curiosity.
+              always on 24/7.
             </Text>
           </Column>
           <Line background="neutral-alpha-medium" />
           <Row
-            paddingX="20" paddingY="12"
+            paddingX="20"
+            paddingY="12"
             gap="8"
             vertical="center"
             textVariant="label-default-s"
@@ -182,14 +184,14 @@ export default function Home() {
           </Row>
         </Card>
 
-        {/* Card 3 - New Card */}
-        <Card 
-          radius="l-4" 
-          direction="column" 
-          border="neutral-alpha-medium" 
-          style={{ 
+        {/* Card 3 */}
+        <Card
+          radius="l-4"
+          direction="column"
+          border="neutral-alpha-medium"
+          style={{
             width: "380px",
-            flexShrink: 0
+            flexShrink: 0,
           }}
         >
           <Row fillWidth paddingX="20" paddingY="12" gap="8" vertical="center">
@@ -202,18 +204,19 @@ export default function Home() {
             fillWidth
             aspectRatio="4 / 3"
             radius="l"
-            alt="TRAPPIST-1e"
+            alt="USD"
             src="/images/card3.jpg"
           />
           <Column fillWidth paddingX="20" paddingY="24" gap="8">
             <Text variant="body-default-xl">TRAPPIST-1e</Text>
             <Text onBackground="neutral-weak" variant="body-default-s">
-              An Earth-sized exoplanet that might have liquid water and potentially habitable conditions.
+              easiest way to convert crypto to card.
             </Text>
           </Column>
           <Line background="neutral-alpha-medium" />
           <Row
-            paddingX="20" paddingY="12"
+            paddingX="20"
+            paddingY="12"
             gap="8"
             vertical="center"
             textVariant="label-default-s"
