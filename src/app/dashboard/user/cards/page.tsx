@@ -169,9 +169,7 @@ export default function MyCardsPage() {
       </div>
 
       {/* Request New Card */}
-      <Button onClick={handleRequestCard} icon={<Plus />} fillWidth style={{ marginTop: "1rem" }}>
-        Request New Card
-      </Button>
+      
     </Column>
   );
 }
