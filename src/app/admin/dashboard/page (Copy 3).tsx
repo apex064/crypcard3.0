@@ -104,58 +104,22 @@ export default function AdminDashboard() {
         <Column gap="s" marginTop="s">
           {/* Card creation form */}
           <Row gap="m" align="center" wrap>
-            <Column gap="xs">
-              <Text>User</Text>
-              <select
-                value={newCardUserId}
-                onChange={(e) => setNewCardUserId(e.target.value)}
-                style={{ minWidth: "200px", padding: "6px", borderRadius: "6px", border: "1px solid #ccc" }}
-              >
-                <option value="">Select User</option>
-                {users.map(user => (
-                  <option key={user.id} value={user.id.toString()}>
-                    {user.email} (ID: {user.id})
-                  </option>
-                ))}
-              </select>
-            </Column>
-
-            <Column gap="xs">
-              <Text>Base Price</Text>
-              <Input
-                placeholder="Base Price"
-                type="number"
-                value={basePrice}
-                onChange={e => setBasePrice(Number(e.target.value))}
-                style={{ width: "100px" }}
-              />
-            </Column>
-
-            <Column gap="xs">
-              <Text>Markup</Text>
-              <Input
-                placeholder="Markup"
-                type="number"
-                value={markup}
-                onChange={e => setMarkup(Number(e.target.value))}
-                style={{ width: "100px" }}
-              />
-            </Column>
-
-            <Column gap="xs">
-              <Text>Profit Margin (%)</Text>
-              <Input
-                placeholder="Profit Margin"
-                type="number"
-                value={profitMargin}
-                onChange={e => setProfitMargin(Number(e.target.value))}
-                style={{ width: "120px" }}
-              />
-            </Column>
-
-            <Button variant="primary" onClick={createCard} disabled={!newCardUserId}>
-              Create
-            </Button>
+            <select
+              value={newCardUserId}
+              onChange={(e) => setNewCardUserId(e.target.value)}
+              style={{ minWidth: "200px", padding: "6px", borderRadius: "6px", border: "1px solid #ccc" }}
+            >
+              <option value="">Select User</option>
+              {users.map(user => (
+                <option key={user.id} value={user.id.toString()}>
+                  {user.email} (ID: {user.id})
+                </option>
+              ))}
+            </select>
+            <Input placeholder="Base Price" type="number" value={basePrice} onChange={e => setBasePrice(Number(e.target.value))} style={{ width: "100px" }} />
+            <Input placeholder="Markup" type="number" value={markup} onChange={e => setMarkup(Number(e.target.value))} style={{ width: "100px" }} />
+            <Input placeholder="Profit Margin (%)" type="number" value={profitMargin} onChange={e => setProfitMargin(Number(e.target.value))} style={{ width: "120px" }} />
+            <Button variant="primary" onClick={createCard} disabled={!newCardUserId}>Create</Button>
           </Row>
 
           {/* Existing cards list */}
@@ -209,39 +173,12 @@ export default function AdminDashboard() {
         <Column gap="s" marginTop="s">
           {/* User creation form */}
           <Row gap="m" align="center" wrap>
-            <Column gap="xs">
-              <Text>Email</Text>
-              <Input
-                placeholder="Email"
-                value={newEmail}
-                onChange={e => setNewEmail(e.target.value)}
-                style={{ minWidth: "200px" }}
-              />
-            </Column>
-
-            <Column gap="xs">
-              <Text>Password</Text>
-              <Input
-                placeholder="Password"
-                type="password"
-                value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
-                style={{ minWidth: "150px" }}
-              />
-            </Column>
-
-            <Column gap="xs">
-              <Text>Role</Text>
-              <select
-                value={newRole}
-                onChange={(e) => setNewRole(e.target.value)}
-                style={{ minWidth: "120px", padding: "4px", borderRadius: "4px", border: "1px solid #ccc" }}
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
-            </Column>
-
+            <Input placeholder="Email" value={newEmail} onChange={e => setNewEmail(e.target.value)} style={{ minWidth: "200px" }} />
+            <Input placeholder="Password" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={{ minWidth: "150px" }} />
+            <select value={newRole} onChange={(e) => setNewRole(e.target.value)} style={{ minWidth: "120px", padding: "4px", borderRadius: "4px", border: "1px solid #ccc" }}>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
             <Button variant="primary" onClick={createUser}>Create</Button>
           </Row>
 
