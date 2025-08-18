@@ -62,27 +62,30 @@ export default function AdminDashboard() {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
+  // --- Fetch helper to safely parse JSON ---
+  const safeFetchJson = async (url: string, options?: RequestInit) => {
+    const res = await fetch(url, options);
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : {};
+    if (!res.ok) throw new Error(data.error || "Request failed");
+    return data;
+  };
+
   const fetchAll = async () => {
     if (!token) return;
     setLoading(true);
     try {
-      const cardsRes = await fetch("/api/admin/cards", { headers: authHeader });
-      const cardsData = await cardsRes.json();
-      if (!cardsRes.ok) throw new Error(cardsData.error || "Failed to fetch cards");
+      const cardsData = await safeFetchJson("/api/admin/cards", { headers: authHeader });
       setCards(cardsData.cards || []);
 
-      const topupsRes = await fetch("/api/admin/topups", { headers: authHeader });
-      const topupsData = await topupsRes.json();
-      if (!topupsRes.ok) throw new Error(topupsData.error || "Failed to fetch topups");
+      const topupsData = await safeFetchJson("/api/admin/topups", { headers: authHeader });
       const processedTopups = (topupsData.rows || topupsData || []).map((t: TopupData) => ({
         ...t,
         amount: Number(t.amount) || 0,
       }));
       setTopups(processedTopups);
 
-      const usersRes = await fetch("/api/admin/users", { headers: authHeader });
-      const usersData = await usersRes.json();
-      if (!usersRes.ok) throw new Error(usersData.error || "Failed to fetch users");
+      const usersData = await safeFetchJson("/api/admin/users", { headers: authHeader });
       setUsers(usersData.users || []);
     } catch (err: any) {
       alert(err.message || "Error fetching data");
@@ -99,7 +102,7 @@ export default function AdminDashboard() {
   const createCard = async () => {
     if (!newCardUserId) return alert("Select a user to create a card");
     try {
-      const res = await fetch("/api/admin/cards", {
+      await safeFetchJson("/api/admin/cards", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({
@@ -109,8 +112,6 @@ export default function AdminDashboard() {
           profit_margin: Number(profitMargin),
         }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to create card");
       alert("Card created!");
       setNewCardUserId("");
       fetchAll();
@@ -121,7 +122,7 @@ export default function AdminDashboard() {
 
   const updateCard = async (card: CardData) => {
     try {
-      const res = await fetch("/api/admin/cards", {
+      await safeFetchJson("/api/admin/cards", {
         method: "PUT",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({
@@ -132,8 +133,6 @@ export default function AdminDashboard() {
           status: card.status,
         }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to update card");
       alert("Card updated!");
       fetchAll();
     } catch (err: any) {
@@ -144,13 +143,11 @@ export default function AdminDashboard() {
   const deleteCard = async (cardId: string) => {
     if (!confirm("Are you sure you want to delete this card?")) return;
     try {
-      const res = await fetch("/api/admin/cards", {
+      await safeFetchJson("/api/admin/cards", {
         method: "DELETE",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ id: cardId }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to delete card");
       alert("Card deleted!");
       fetchAll();
     } catch (err: any) {
@@ -163,13 +160,11 @@ export default function AdminDashboard() {
     if (!selectedCardId || topupAmount <= 0) return alert("Select a card and enter a valid amount");
     setTopupLoading(true);
     try {
-      const res = await fetch("/api/admin/funding", {
+      await safeFetchJson("/api/admin/funding", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ cardId: selectedCardId, amount: topupAmount }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to top up card");
       alert(`Card topped up with $${topupAmount}`);
       setSelectedCardId("");
       setTopupAmount(0);
@@ -179,6 +174,62 @@ export default function AdminDashboard() {
       alert(err.message || "Error topping up card");
     } finally {
       setTopupLoading(false);
+    }
+  };
+
+  // --- Topup Functions ---
+  const updateTopupStatus = async (topupId: number, status: string) => {
+    try {
+      await safeFetchJson("/api/admin/topups", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", ...authHeader },
+        body: JSON.stringify({ id: topupId, status }),
+      });
+      fetchAll();
+    } catch (err: any) {
+      alert(err.message || "Error updating topup status");
+    }
+  };
+
+  const deleteTopup = async (topupId: number) => {
+    if (!confirm("Are you sure you want to delete this topup?")) return;
+    try {
+      await safeFetchJson("/api/admin/topups", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", ...authHeader },
+        body: JSON.stringify({ id: topupId }),
+      });
+      fetchAll();
+    } catch (err: any) {
+      alert(err.message || "Error deleting topup");
+    }
+  };
+
+  // --- User Functions ---
+  const updateUserRole = async (userId: string | number, role: string) => {
+    try {
+      await safeFetchJson("/api/admin/users", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", ...authHeader },
+        body: JSON.stringify({ id: userId, role }),
+      });
+      fetchAll();
+    } catch (err: any) {
+      alert(err.message || "Error updating user role");
+    }
+  };
+
+  const deleteUser = async (userId: string | number) => {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+    try {
+      await safeFetchJson("/api/admin/users", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", ...authHeader },
+        body: JSON.stringify({ id: userId }),
+      });
+      fetchAll();
+    } catch (err: any) {
+      alert(err.message || "Error deleting user");
     }
   };
 
@@ -228,7 +279,9 @@ export default function AdminDashboard() {
                   <Text>ID: {topup.id} | User ID: {topup.user_id} | Amount: ${Number(topup.amount || 0).toFixed(2)}</Text>
                   <Row gap="s" wrap="wrap" marginTop="xs">
                     {getStatusTag(topup.status)}
+                    <label htmlFor={`topup-status-${topup.id}`}>Status:</label>
                     <select
+                      id={`topup-status-${topup.id}`}
                       value={topup.status}
                       onChange={(e) => updateTopupStatus(topup.id, e.target.value)}
                       style={{ width: "120px", padding: "4px 6px", borderRadius: "6px", border: "1px solid #ccc" }}
@@ -255,7 +308,9 @@ export default function AdminDashboard() {
                   <Text>{user.email} | Created At: {new Date(user.created_at).toLocaleString()}</Text>
                   <Row gap="s" wrap="wrap" marginTop="xs">
                     {getRoleBadge(user.role)}
+                    <label htmlFor={`user-role-${user.id}`}>Role:</label>
                     <select
+                      id={`user-role-${user.id}`}
                       value={user.role}
                       onChange={(e) => updateUserRole(user.id, e.target.value)}
                       style={{ minWidth: "120px", padding: "4px 6px", borderRadius: "6px", border: "1px solid #ccc" }}
@@ -276,23 +331,15 @@ export default function AdminDashboard() {
       <Card padding="l" radius="l" border="neutral-alpha-medium">
         <Heading variant="heading-default-xl">Cards</Heading>
         <Row gap="m" align="center" marginTop="s" wrap="wrap">
-          <select
-            value={newCardUserId}
-            onChange={(e) => setNewCardUserId(e.target.value)}
-            style={{ minWidth: "10px", padding: "3px 2px", borderRadius: "6px", border: "0.5px solid #ccc" }}
-          >
+          <select value={newCardUserId} onChange={(e) => setNewCardUserId(e.target.value)} style={{ minWidth: "10px", padding: "3px 2px", borderRadius: "6px", border: "0.5px solid #ccc" }}>
             <option value="">Select User</option>
-            {users.map((user) => (
-              <option key={user.id} value={user.id.toString()}>
-                {user.email} (ID: {user.id})
-              </option>
-            ))}
+            {users.map(user => <option key={user.id} value={user.id.toString()}>{user.email} (ID: {user.id})</option>)}
           </select>
-          <Input placeholder="Base Price" type="number" value={basePrice} onChange={e => setBasePrice(Number(e.target.value))} style={{ width: "100px" }} />
-          <Input placeholder="Markup" type="number" value={markup} onChange={e => setMarkup(Number(e.target.value))} style={{ width: "100px" }} />
-          <Input placeholder="Profit Margin (%)" type="number" value={profitMargin} onChange={e => setProfitMargin(Number(e.target.value))} style={{ width: "120px" }} />
-          <Button size="s" weight="default" variant="primary" onClick={createCard} disabled={newCardUserId === ""}>Create</Button>
-          <Button size="s" weight="default" variant="success" onClick={() => setTopupDialogOpen(true)}>Top Up Card</Button>
+          <Input type="number" value={basePrice} onChange={e => setBasePrice(Number(e.target.value))} placeholder="Base Price" style={{ width: "100px" }} />
+          <Input type="number" value={markup} onChange={e => setMarkup(Number(e.target.value))} placeholder="Markup" style={{ width: "100px" }} />
+          <Input type="number" value={profitMargin} onChange={e => setProfitMargin(Number(e.target.value))} placeholder="Profit Margin (%)" style={{ width: "120px" }} />
+          <Button variant="primary" size="s" onClick={createCard} disabled={!newCardUserId}>Create</Button>
+          <Button variant="success" size="s" onClick={() => setTopupDialogOpen(true)}>Top Up Card</Button>
         </Row>
 
         <Column gap="s" marginTop="s">
@@ -302,8 +349,8 @@ export default function AdminDashboard() {
                 <Text>{card.maskedNumber} | Type: {card.type} | Balance: ${Number(card.balance || 0).toFixed(2)}</Text>
                 <Row gap="s" wrap="wrap" marginTop="xs">
                   {getCardStatusTag(card.status)}
-                  <Button size="s" weight="default" variant="secondary" onClick={() => updateCard(card)}>Update</Button>
-                  <Button size="s" weight="default" variant="danger" onClick={() => deleteCard(card.id)}>Delete</Button>
+                  <Button size="s" variant="secondary" onClick={() => updateCard(card)}>Update</Button>
+                  <Button size="s" variant="danger" onClick={() => deleteCard(card.id)}>Delete</Button>
                 </Row>
               </Row>
             </Card>
@@ -312,59 +359,23 @@ export default function AdminDashboard() {
       </Card>
 
       {/* --- Topup Dialog --- */}
-      <Dialog
-        isOpen={topupDialogOpen}
-        onClose={() => setTopupDialogOpen(false)}
-        title="Top Up Card"
-        description="Select a card and enter the amount to top up."
-      >
+      <Dialog isOpen={topupDialogOpen} onClose={() => setTopupDialogOpen(false)} title="Top Up Card" description="Select a card and enter the amount to top up.">
         <Column fillWidth gap="s" marginTop="s">
-          {/* Native React select */}
-          <select
-            value={selectedCardId}
-            onChange={(e) => setSelectedCardId(e.target.value)}
-            style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #ccc" }}
-          >
+          <select value={selectedCardId} onChange={(e) => setSelectedCardId(e.target.value)} style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #ccc" }}>
             <option value="">Select Card</option>
-            {cards.map(card => (
-              <option key={card.id} value={card.id}>
-                {card.maskedNumber} | Balance: ${Number(card.balance || 0).toFixed(2)}
-              </option>
-            ))}
+            {cards.map(card => <option key={card.id} value={card.id}>{card.maskedNumber} | Balance: ${Number(card.balance || 0).toFixed(2)}</option>)}
           </select>
-
-          <Input
-            type="number"
-            placeholder="Amount"
-            value={topupAmount}
-            onChange={(e) => setTopupAmount(Number(e.target.value))}
-            style={{ width: "100%" }}
-          />
-
+          <Input type="number" placeholder="Amount" value={topupAmount} onChange={(e) => setTopupAmount(Number(e.target.value))} style={{ width: "100%" }} />
           <Row gap="8">
-            <Button variant="success" onClick={handleTopup} disabled={topupLoading}>
-              {topupLoading ? "Processing..." : "Top Up"}
-            </Button>
-            <Button variant="tertiary" onClick={() => setTopupDialogOpen(false)} disabled={topupLoading}>
-              Cancel
-            </Button>
+            <Button variant="success" onClick={handleTopup} disabled={topupLoading}>{topupLoading ? "Processing..." : "Top Up"}</Button>
+            <Button variant="tertiary" onClick={() => setTopupDialogOpen(false)} disabled={topupLoading}>Cancel</Button>
           </Row>
         </Column>
       </Dialog>
 
-      {/* --- Logout Button at the bottom --- */}
+      {/* --- Logout --- */}
       <Row justify="center" marginTop="l">
-        <Button
-          size="s"
-          weight="default"
-          variant="tertiary"
-          onClick={() => {
-            localStorage.removeItem("token");
-            window.location.href = "/admin/login";
-          }}
-        >
-          Logout
-        </Button>
+        <Button size="s" variant="tertiary" onClick={() => { localStorage.removeItem("token"); window.location.href = "/admin/login"; }}>Logout</Button>
       </Row>
     </Column>
   );
