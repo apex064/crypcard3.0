@@ -11,7 +11,6 @@ import {
   Text,
   Badge,
   Tag,
-  Dialog,
 } from "@once-ui-system/core";
 
 interface CardData {
@@ -52,12 +51,6 @@ export default function AdminDashboard() {
   const [basePrice, setBasePrice] = useState(25);
   const [markup, setMarkup] = useState(0);
   const [profitMargin, setProfitMargin] = useState(5);
-
-  // Topup Dialog states
-  const [topupDialogOpen, setTopupDialogOpen] = useState(false);
-  const [selectedCardId, setSelectedCardId] = useState<string>("");
-  const [topupAmount, setTopupAmount] = useState<number>(0);
-  const [topupLoading, setTopupLoading] = useState(false);
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
@@ -158,27 +151,75 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- Topup Dialog handler ---
-  const handleTopup = async () => {
-    if (!selectedCardId || topupAmount <= 0) return alert("Select a card and enter a valid amount");
-    setTopupLoading(true);
+  // --- Topup actions ---
+  const updateTopupStatus = async (id: number, status: string) => {
     try {
-      const res = await fetch("/api/admin/funding", {
-        method: "POST",
+      const res = await fetch("/api/admin/topups", {
+        method: "PUT",
         headers: { "Content-Type": "application/json", ...authHeader },
-        body: JSON.stringify({ cardId: selectedCardId, amount: topupAmount }),
+        body: JSON.stringify({ id, status }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to top up card");
-      alert(`Card topped up with $${topupAmount}`);
-      setSelectedCardId("");
-      setTopupAmount(0);
-      setTopupDialogOpen(false);
+      if (!res.ok) throw new Error(data.error || "Failed to update topup");
+      alert("Topup status updated!");
       fetchAll();
     } catch (err: any) {
-      alert(err.message || "Error topping up card");
-    } finally {
-      setTopupLoading(false);
+      alert(err.message || "Error updating topup");
+    }
+  };
+
+  const deleteTopup = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this topup?")) return;
+    try {
+      const res = await fetch("/api/admin/topups", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", ...authHeader },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete topup");
+      alert("Topup deleted!");
+      fetchAll();
+    } catch (err: any) {
+      alert(err.message || "Error deleting topup");
+    }
+  };
+
+  // --- User actions ---
+  const updateUserRole = async (userId: string | number, role: string) => {
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeader },
+        body: JSON.stringify({
+          action: "update_user_role",
+          userId,
+          role,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update role");
+      alert("User role updated!");
+      fetchAll();
+    } catch (err: any) {
+      alert(err.message || "Error updating role");
+    }
+  };
+
+  const deleteUser = async (userId: string | number) => {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeader },
+        body: JSON.stringify({ action: "delete_user", userId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete user");
+      alert("User deleted!");
+      fetchAll();
+    } catch (err: any) {
+      alert(err.message || "Error deleting user");
     }
   };
 
@@ -292,7 +333,6 @@ export default function AdminDashboard() {
           <Input placeholder="Markup" type="number" value={markup} onChange={e => setMarkup(Number(e.target.value))} style={{ width: "100px" }} />
           <Input placeholder="Profit Margin (%)" type="number" value={profitMargin} onChange={e => setProfitMargin(Number(e.target.value))} style={{ width: "120px" }} />
           <Button size="s" weight="default" variant="primary" onClick={createCard} disabled={newCardUserId === ""}>Create</Button>
-          <Button size="s" weight="default" variant="success" onClick={() => setTopupDialogOpen(true)}>Top Up Card</Button>
         </Row>
 
         <Column gap="s" marginTop="s">
@@ -310,47 +350,6 @@ export default function AdminDashboard() {
           ))}
         </Column>
       </Card>
-
-      {/* --- Topup Dialog --- */}
-      <Dialog
-        isOpen={topupDialogOpen}
-        onClose={() => setTopupDialogOpen(false)}
-        title="Top Up Card"
-        description="Select a card and enter the amount to top up."
-      >
-        <Column fillWidth gap="s" marginTop="s">
-          {/* Native React select */}
-          <select
-            value={selectedCardId}
-            onChange={(e) => setSelectedCardId(e.target.value)}
-            style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #ccc" }}
-          >
-            <option value="">Select Card</option>
-            {cards.map(card => (
-              <option key={card.id} value={card.id}>
-                {card.maskedNumber} | Balance: ${Number(card.balance || 0).toFixed(2)}
-              </option>
-            ))}
-          </select>
-
-          <Input
-            type="number"
-            placeholder="Amount"
-            value={topupAmount}
-            onChange={(e) => setTopupAmount(Number(e.target.value))}
-            style={{ width: "100%" }}
-          />
-
-          <Row gap="8">
-            <Button variant="success" onClick={handleTopup} disabled={topupLoading}>
-              {topupLoading ? "Processing..." : "Top Up"}
-            </Button>
-            <Button variant="tertiary" onClick={() => setTopupDialogOpen(false)} disabled={topupLoading}>
-              Cancel
-            </Button>
-          </Row>
-        </Column>
-      </Dialog>
 
       {/* --- Logout Button at the bottom --- */}
       <Row justify="center" marginTop="l">
