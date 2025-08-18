@@ -373,17 +373,19 @@ export default function AdminDashboard() {
                   <Text>ID: {topup.id} | User ID: {topup.user_id} | Amount: ${Number(topup.amount || 0).toFixed(2)}</Text>
                   <Row gap="s" wrap="wrap" marginTop="xs">
                     {getStatusTag(topup.status)}
-                    <label htmlFor={`topup-status-${topup.id}`}>Status:</label>
-                    <select
-                      id={`topup-status-${topup.id}`}
-                      value={topup.status}
-                      onChange={(e) => updateTopupStatus(topup.id, e.target.value)}
-                      style={{ width: "120px", padding: "4px 6px", borderRadius: "6px", border: "1px solid #ccc" }}
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="approved">Approved</option>
-                      <option value="rejected">Rejected</option>
-                    </select>
+                    <Column gap="xs">
+                      <Text size="sm" weight="medium">Status</Text>
+                      <select
+                        id={`topup-status-${topup.id}`}
+                        value={topup.status}
+                        onChange={(e) => updateTopupStatus(topup.id, e.target.value)}
+                        style={{ width: "120px", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                      </select>
+                    </Column>
                     <Button size="s" weight="default" variant="danger" onClick={() => deleteTopup(topup.id)}>Delete</Button>
                   </Row>
                 </Row>
@@ -401,16 +403,18 @@ export default function AdminDashboard() {
                   <Text>{user.email} | Created At: {new Date(user.created_at).toLocaleString()}</Text>
                   <Row gap="s" wrap="wrap" marginTop="xs">
                     {getRoleBadge(user.role)}
-                    <label htmlFor={`user-role-${user.id}`}>Role:</label>
-                    <select
-                      id={`user-role-${user.id}`}
-                      value={user.role}
-                      onChange={(e) => updateUserRole(user.id, e.target.value)}
-                      style={{ minWidth: "120px", padding: "4px 6px", borderRadius: "6px", border: "1px solid #ccc" }}
-                    >
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                    </select>
+                    <Column gap="xs">
+                      <Text size="sm" weight="medium">Role</Text>
+                      <select
+                        id={`user-role-${user.id}`}
+                        value={user.role}
+                        onChange={(e) => updateUserRole(user.id, e.target.value)}
+                        style={{ minWidth: "120px", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+                      >
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </Column>
                     <Button size="s" weight="default" variant="danger" onClick={() => deleteUser(user.id)}>Delete</Button>
                   </Row>
                 </Row>
@@ -423,16 +427,56 @@ export default function AdminDashboard() {
       {/* Cards Section */}
       <Card padding="l" radius="l" border="neutral-alpha-medium">
         <Heading variant="heading-default-xl">Cards</Heading>
-        <Row gap="m" align="center" marginTop="s" wrap="wrap">
-          <select value={newCardUserId} onChange={(e) => setNewCardUserId(e.target.value)} style={{ minWidth: "10px", padding: "3px 2px", borderRadius: "6px", border: "0.5px solid #ccc" }}>
-            <option value="">Select User</option>
-            {users.map(user => <option key={user.id} value={user.id.toString()}>{user.email} (ID: {user.id})</option>)}
-          </select>
-          <Input type="number" value={basePrice} onChange={e => setBasePrice(Number(e.target.value))} placeholder="Base Price" style={{ width: "100px" }} />
-          <Input type="number" value={markup} onChange={e => setMarkup(Number(e.target.value))} placeholder="Markup" style={{ width: "100px" }} />
-          <Input type="number" value={profitMargin} onChange={e => setProfitMargin(Number(e.target.value))} placeholder="Profit Margin (%)" style={{ width: "120px" }} />
-          <Button variant="primary" size="s" onClick={createCard} disabled={!newCardUserId}>Create</Button>
-          <Button variant="success" size="s" onClick={() => setTopupDialogOpen(true)}>Top Up Card</Button>
+        <Row gap="m" align="flex-start" marginTop="s" wrap="wrap">
+          <Column gap="xs">
+            <Text size="sm" weight="medium">Select User</Text>
+            <select 
+              value={newCardUserId} 
+              onChange={(e) => setNewCardUserId(e.target.value)} 
+              style={{ minWidth: "200px", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+            >
+              <option value="">Select User</option>
+              {users.map(user => <option key={user.id} value={user.id.toString()}>{user.email} (ID: {user.id})</option>)}
+            </select>
+          </Column>
+
+          <Column gap="xs">
+            <Text size="sm" weight="medium">Base Price ($)</Text>
+            <Input 
+              type="number" 
+              value={basePrice} 
+              onChange={e => setBasePrice(Number(e.target.value))} 
+              style={{ width: "120px" }} 
+            />
+          </Column>
+
+          <Column gap="xs">
+            <Text size="sm" weight="medium">Markup ($)</Text>
+            <Input 
+              type="number" 
+              value={markup} 
+              onChange={e => setMarkup(Number(e.target.value))} 
+              style={{ width: "120px" }} 
+            />
+          </Column>
+
+          <Column gap="xs">
+            <Text size="sm" weight="medium">Profit Margin (%)</Text>
+            <Input 
+              type="number" 
+              value={profitMargin} 
+              onChange={e => setProfitMargin(Number(e.target.value))} 
+              style={{ width: "120px" }} 
+            />
+          </Column>
+
+          <Button variant="primary" size="s" onClick={createCard} disabled={!newCardUserId} style={{ alignSelf: "flex-end" }}>
+            Create Card
+          </Button>
+          
+          <Button variant="success" size="s" onClick={() => setTopupDialogOpen(true)} style={{ alignSelf: "flex-end" }}>
+            Top Up Card
+          </Button>
         </Row>
 
         <Column gap="s" marginTop="s">
@@ -453,15 +497,37 @@ export default function AdminDashboard() {
 
       {/* Topup Dialog */}
       <Dialog isOpen={topupDialogOpen} onClose={() => setTopupDialogOpen(false)} title="Top Up Card" description="Select a card and enter the amount to top up.">
-        <Column fillWidth gap="s" marginTop="s">
-          <select value={selectedCardId} onChange={(e) => setSelectedCardId(e.target.value)} style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #ccc" }}>
-            <option value="">Select Card</option>
-            {cards.map(card => <option key={card.id} value={card.id}>{card.maskedNumber} | Balance: ${Number(card.balance || 0).toFixed(2)}</option>)}
-          </select>
-          <Input type="number" placeholder="Amount" value={topupAmount} onChange={(e) => setTopupAmount(Number(e.target.value))} style={{ width: "100%" }} />
-          <Row gap="8">
-            <Button variant="success" onClick={handleTopup} disabled={topupLoading}>{topupLoading ? "Processing..." : "Top Up"}</Button>
-            <Button variant="tertiary" onClick={() => setTopupDialogOpen(false)} disabled={topupLoading}>Cancel</Button>
+        <Column fillWidth gap="m" marginTop="s">
+          <Column gap="xs">
+            <Text size="sm" weight="medium">Select Card</Text>
+            <select 
+              value={selectedCardId} 
+              onChange={(e) => setSelectedCardId(e.target.value)} 
+              style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+            >
+              <option value="">Select Card</option>
+              {cards.map(card => <option key={card.id} value={card.id}>{card.maskedNumber} | Balance: ${Number(card.balance || 0).toFixed(2)}</option>)}
+            </select>
+          </Column>
+
+          <Column gap="xs">
+            <Text size="sm" weight="medium">Amount ($)</Text>
+            <Input 
+              type="number" 
+              placeholder="Enter amount" 
+              value={topupAmount} 
+              onChange={(e) => setTopupAmount(Number(e.target.value))} 
+              style={{ width: "100%" }} 
+            />
+          </Column>
+
+          <Row gap="m" justify="flex-end">
+            <Button variant="tertiary" onClick={() => setTopupDialogOpen(false)} disabled={topupLoading}>
+              Cancel
+            </Button>
+            <Button variant="success" onClick={handleTopup} disabled={topupLoading || !selectedCardId || topupAmount <= 0}>
+              {topupLoading ? "Processing..." : "Confirm Top Up"}
+            </Button>
           </Row>
         </Column>
       </Dialog>
@@ -484,23 +550,31 @@ export default function AdminDashboard() {
             fillWidth
             style={{ maxHeight: "80vh", overflowY: "auto" }}
           >
-            <Row gap="md" wrap>
-              <Input
-                placeholder="Search by User ID or Card ID"
-                value={search}
-                onChange={(e: any) => setSearch(e.target.value)}
-              />
-              <select
-                className="p-2 border rounded"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              >
-                <option value="all">All</option>
-                <option value="pending">Pending</option>
-                <option value="completed">Completed</option>
-                <option value="failed">Failed</option>
-              </select>
-              <Button onClick={() => setPage(1)}>Apply</Button>
+            <Row gap="md" wrap align="flex-end">
+              <Column gap="xs" style={{ flex: 1 }}>
+                <Text size="sm" weight="medium">Search</Text>
+                <Input
+                  placeholder="User ID or Card ID"
+                  value={search}
+                  onChange={(e: any) => setSearch(e.target.value)}
+                />
+              </Column>
+
+              <Column gap="xs">
+                <Text size="sm" weight="medium">Filter</Text>
+                <select
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  style={{ padding: "8px", borderRadius: "6px", border: "1px solid #ccc", minWidth: "150px" }}
+                >
+                  <option value="all">All Transactions</option>
+                  <option value="pending">Pending</option>
+                  <option value="completed">Completed</option>
+                  <option value="failed">Failed</option>
+                </select>
+              </Column>
+
+              <Button onClick={() => setPage(1)}>Apply Filters</Button>
             </Row>
 
             {loading ? (
@@ -538,7 +612,7 @@ export default function AdminDashboard() {
 
             <Row gap="md" justify="center">
               <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
-                Prev
+                Previous
               </Button>
               <Text>Page {page}</Text>
               <Button onClick={() => setPage(page + 1)}>Next</Button>
