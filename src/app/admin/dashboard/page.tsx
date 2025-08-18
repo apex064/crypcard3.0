@@ -12,7 +12,12 @@ import {
   Badge,
   Tag,
   Dialog,
+  ThemeSwitcher,
+  BarChart,
+  LineChart
 } from "@once-ui-system/core";
+
+import Header from "@/components/Header3";
 
 interface CardData {
   id: string;
@@ -62,7 +67,6 @@ export default function AdminDashboard() {
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
-  // --- Fetch helper to safely parse JSON ---
   const safeFetchJson = async (url: string, options?: RequestInit) => {
     const res = await fetch(url, options);
     const text = await res.text();
@@ -75,17 +79,20 @@ export default function AdminDashboard() {
     if (!token) return;
     setLoading(true);
     try {
-      const cardsData = await safeFetchJson("/api/admin/cards", { headers: authHeader });
-      setCards(cardsData.cards || []);
+      const [cardsData, topupsData, usersData] = await Promise.all([
+        safeFetchJson("/api/admin/cards", { headers: authHeader }),
+        safeFetchJson("/api/admin/topups", { headers: authHeader }),
+        safeFetchJson("/api/admin/users", { headers: authHeader })
+      ]);
 
-      const topupsData = await safeFetchJson("/api/admin/topups", { headers: authHeader });
+      setCards(cardsData.cards || []);
+      
       const processedTopups = (topupsData.rows || topupsData || []).map((t: TopupData) => ({
         ...t,
         amount: Number(t.amount) || 0,
       }));
       setTopups(processedTopups);
-
-      const usersData = await safeFetchJson("/api/admin/users", { headers: authHeader });
+      
       setUsers(usersData.users || []);
     } catch (err: any) {
       alert(err.message || "Error fetching data");
@@ -98,7 +105,7 @@ export default function AdminDashboard() {
     fetchAll();
   }, []);
 
-  // --- Card actions ---
+  // Card actions
   const createCard = async () => {
     if (!newCardUserId) return alert("Select a user to create a card");
     try {
@@ -155,7 +162,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- Topup Dialog handler ---
   const handleTopup = async () => {
     if (!selectedCardId || topupAmount <= 0) return alert("Select a card and enter a valid amount");
     setTopupLoading(true);
@@ -177,7 +183,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- Topup Functions ---
   const updateTopupStatus = async (topupId: number, status: string) => {
     try {
       await safeFetchJson("/api/admin/topups", {
@@ -205,7 +210,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- User Functions ---
   const updateUserRole = async (userId: string | number, role: string) => {
     try {
       await safeFetchJson("/api/admin/users", {
@@ -233,7 +237,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- Helpers ---
+  // Helpers
   const getStatusTag = (status: string) => {
     switch (status.toLowerCase()) {
       case "approved":
@@ -261,15 +265,90 @@ export default function AdminDashboard() {
     return <Badge variant={variant}>{role}</Badge>;
   };
 
+  // Chart data
+  const topupChartData = [
+    {
+      label: "Topups",
+      approved: topups.filter(t => t.status === "approved").length,
+      pending: topups.filter(t => t.status === "pending").length,
+      rejected: topups.filter(t => t.status === "rejected").length
+    }
+  ];
+
+  const userChartData = [
+    {
+      label: "Users",
+      admin: users.filter(u => u.role === "admin").length,
+      user: users.filter(u => u.role === "user").length
+    }
+  ];
+
+  const cardBalanceData = cards.map(card => ({
+    date: new Date(),
+    balance: Number(card.balance || 0)
+  }));
+
   return (
     <Column fillWidth padding="l" gap="l">
+      <Row justify="space-between" align="center">
+        <Header />
+        <ThemeSwitcher
+          direction="row"
+          padding="2"
+          gap="2"
+          background="surface"
+          border="surface"
+          radius="full"
+          style={{ marginLeft: "auto" }}
+        />
+      </Row>
+
       <Badge variant="primary" style={{ borderRadius: "9999px", padding: "6px 16px", fontSize: "1.25rem" }}>
         Admin Dashboard
       </Badge>
 
-      {/* --- Topups & Users Side by Side --- */}
+      {/* Compact Charts Row */}
+      <Row gap="m" align="stretch" style={{ height: "300px" }}>
+        {/* Topups Status Chart */}
+        <Card style={{ flex: 1, minWidth: "250px", padding: "12px" }}>
+          <BarChart
+            title="Topups Status"
+            height="100%"
+            series={[
+              { key: "approved", color: "green" },
+              { key: "pending", color: "yellow" },
+              { key: "rejected", color: "red" }
+            ]}
+            data={topupChartData}
+          />
+        </Card>
+
+        {/* Users Role Chart */}
+        <Card style={{ flex: 1, minWidth: "250px", padding: "12px" }}>
+          <BarChart
+            title="Users"
+            height="100%"
+            series={[
+              { key: "admin", color: "cyan" },
+              { key: "user", color: "magenta" }
+            ]}
+            data={userChartData}
+          />
+        </Card>
+
+        {/* Card Balances Chart */}
+        <Card style={{ flex: 1, minWidth: "250px", padding: "12px" }}>
+          <LineChart
+            title="Card Balances"
+            height="100%"
+            series={[{ key: "balance", color: "aqua" }]}
+            data={cardBalanceData}
+          />
+        </Card>
+      </Row>
+
+      {/* Topups & Users Section */}
       <Row gap="l" wrap="wrap">
-        {/* Topups */}
         <Card padding="l" radius="l" border="neutral-alpha-medium" style={{ flex: 1, minWidth: "300px" }}>
           <Heading variant="heading-default-xl">Topups</Heading>
           <Column gap="s" marginTop="s">
@@ -298,7 +377,6 @@ export default function AdminDashboard() {
           </Column>
         </Card>
 
-        {/* Users */}
         <Card padding="l" radius="l" border="neutral-alpha-medium" style={{ flex: 1, minWidth: "300px" }}>
           <Heading variant="heading-default-xl">Users</Heading>
           <Column gap="s" marginTop="s">
@@ -327,7 +405,7 @@ export default function AdminDashboard() {
         </Card>
       </Row>
 
-      {/* --- Cards Section --- */}
+      {/* Cards Section */}
       <Card padding="l" radius="l" border="neutral-alpha-medium">
         <Heading variant="heading-default-xl">Cards</Heading>
         <Row gap="m" align="center" marginTop="s" wrap="wrap">
@@ -358,7 +436,7 @@ export default function AdminDashboard() {
         </Column>
       </Card>
 
-      {/* --- Topup Dialog --- */}
+      {/* Topup Dialog */}
       <Dialog isOpen={topupDialogOpen} onClose={() => setTopupDialogOpen(false)} title="Top Up Card" description="Select a card and enter the amount to top up.">
         <Column fillWidth gap="s" marginTop="s">
           <select value={selectedCardId} onChange={(e) => setSelectedCardId(e.target.value)} style={{ width: "100%", padding: "6px", borderRadius: "6px", border: "1px solid #ccc" }}>
@@ -373,11 +451,21 @@ export default function AdminDashboard() {
         </Column>
       </Dialog>
 
-      {/* --- Logout --- */}
-      <Row justify="center" marginTop="l">
-        <Button size="s" variant="tertiary" onClick={() => { localStorage.removeItem("token"); window.location.href = "/admin/login"; }}>Logout</Button>
+      {/* Logout Button */}
+      <Row justify="flex-end" style={{ marginTop: "24px" }}>
+        <Button
+          variant="outline"
+          size="m"
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              localStorage.removeItem("token");
+              window.location.href = "/admin/login";
+            }
+          }}
+        >
+          Logout
+        </Button>
       </Row>
     </Column>
   );
 }
-

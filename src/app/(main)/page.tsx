@@ -17,9 +17,14 @@ import {
   Icon,
 } from "@once-ui-system/core";
 
+import Header from "@/components/Header4"; // <-- imported your Header component
+
 export default function Home() {
   return (
     <Column fillWidth padding="l" style={{ minHeight: "100vh" }} center={false}>
+      {/* --- Header --- */}
+      <Header />
+
       {/* Hero Section */}
       <Row
         fillWidth
@@ -244,3 +249,4 @@ export default function Home() {
     </Column>
   );
 }
+
